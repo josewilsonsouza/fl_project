@@ -1,0 +1,172 @@
+[93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
+	Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
+
+		$ flower-supernode --insecure --superlink='<IP>:<PORT>'
+
+	To view all available options, run:
+
+		$ flower-supernode --help
+
+	Using `start_client()` is deprecated.
+
+            This is a deprecated feature. It will be removed
+            entirely in future versions of Flower.
+        
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 5bf40068-c93c-4602-bf14-895c53f8261d
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message e60b7d20-e6fb-4b54-bba5-54996ce4715b
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 7f1c0945-8a25-4062-9b42-482284436d2f
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 2ae803e1-04a1-4dde-b2a9-74af9730b699
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 6001a64d-9f07-4e76-a36e-ef21f12f0603
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 2f886dc7-3aaa-457f-bbcd-a31e13a35538
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 109d8ec5-7e2a-4451-acb4-1b455598091d
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 146896ae-66fb-4dcf-ae0e-b671f39730c7
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message d93e8bde-83f5-4213-aa66-31a52f8670dc
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message c96107d0-5866-46de-b168-dd8d6370e53c
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message e1bb6d68-e284-4a31-991f-4fdeb7727b6a
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 084dbcf4-ee02-460c-a8e4-a0117faef750
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 98c62b99-2c4e-4b91-8d65-d62b483eeafb
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message a5c80502-28c4-46ce-bcf2-615d0940bd83
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 4eade5d9-3553-4fcc-bc8f-87abe591fa5b
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 40d2c213-cb1d-42fe-b73a-8ca2de4763b6
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 729add19-adf9-40d2-961a-574782e0637b
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 153d4189-00f1-4f9e-86c1-f4fb126fe539
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 72102c53-639a-4983-b85a-57b20d5a52b3
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 24104043-0419-439f-9bba-3da769cb80ef
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: reconnect message 8f83b63e-303b-4178-b218-4eb319429999
+[92mINFO [0m:      Disconnect and shut down
+Carregando dados para o cliente 3...
+Dispositivo: cpu
+Dados carregados: 992 batches de treino, 245 batches de teste
+Criando modelo LSTM para prever 90 passos.
+
+==================================================
+Iniciando cliente 3
+Conectando ao servidor em 127.0.0.1:8080
+Modelo: LSTM com 16190 parâmetros
+==================================================
+
+
+[Cliente 3] === Rodada 1 ===
+[Cliente 3] Iniciando treinamento...
+[Cliente 3] Perda de treinamento local: 0.047731
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Avaliando modelo...
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Perda de validação: 9.831532
+
+[Cliente 3] === Rodada 2 ===
+[Cliente 3] Iniciando treinamento...
+[Cliente 3] Perda de treinamento local: 8.576512
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Avaliando modelo...
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Perda de validação: 1.461328
+
+[Cliente 3] === Rodada 3 ===
+[Cliente 3] Iniciando treinamento...
+[Cliente 3] Perda de treinamento local: 0.702148
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Avaliando modelo...
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Perda de validação: 0.341640
+
+[Cliente 3] === Rodada 4 ===
+[Cliente 3] Iniciando treinamento...
+[Cliente 3] Perda de treinamento local: 0.209710
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Avaliando modelo...
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Perda de validação: 0.511448
+
+[Cliente 3] === Rodada 5 ===
+[Cliente 3] Iniciando treinamento...
+[Cliente 3] Perda de treinamento local: 0.252078
+[Cliente 3] Checkpoint salvo: metrics\client_3\model_round_5.pt
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Avaliando modelo...
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Perda de validação: 0.058146
+
+[Cliente 3] === Rodada 6 ===
+[Cliente 3] Iniciando treinamento...
+[Cliente 3] Perda de treinamento local: 0.039224
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Avaliando modelo...
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Perda de validação: 0.304315
+
+[Cliente 3] === Rodada 7 ===
+[Cliente 3] Iniciando treinamento...
+[Cliente 3] Perda de treinamento local: 0.190494
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Avaliando modelo...
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Perda de validação: 0.058137
+
+[Cliente 3] === Rodada 8 ===
+[Cliente 3] Iniciando treinamento...
+[Cliente 3] Perda de treinamento local: 0.039078
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Avaliando modelo...
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Perda de validação: 0.083307
+
+[Cliente 3] === Rodada 9 ===
+[Cliente 3] Iniciando treinamento...
+[Cliente 3] Perda de treinamento local: 0.034105
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Avaliando modelo...
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Perda de validação: 0.049672
+
+[Cliente 3] === Rodada 10 ===
+[Cliente 3] Iniciando treinamento...
+[Cliente 3] Perda de treinamento local: 0.031320
+[Cliente 3] Checkpoint salvo: metrics\client_3\model_round_10.pt
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Avaliando modelo...
+[Cliente 3] Métricas salvas em metrics\client_3\metrics_history.json
+[Cliente 3] Perda de validação: 0.029677
+
+[Cliente 3] Finalizado. Métricas salvas em metrics\client_3
