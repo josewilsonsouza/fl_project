@@ -68,7 +68,7 @@ fl_project/
 ### 1. Clone o Repositório
 
 ```bash
-git clone https://github.com/seu-usuario/fl_project.git
+git clone https://github.com/josewilsonsouza/fl_project.git
 cd fl_project
 ```
 
