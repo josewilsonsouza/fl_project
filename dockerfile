@@ -14,4 +14,5 @@ ENV CLIENT_ID=""
 ENV SERVER_ADDRESS=""
 
 # Comando para rodar a aplicação
-CMD python client.py --client-id $CLIENT_ID --server-address $SERVER_ADDRESS
+CMD ["python", "client.py", "--client-id", "$CLIENT_ID", "--server-address", "$SERVER_ADDRESS:8080"]
+
