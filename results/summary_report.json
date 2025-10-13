@@ -1,0 +1,124 @@
+{
+  "timestamp": "2025-08-27T04:48:45.360640",
+  "strategies_analyzed": [
+    "fedadagrad",
+    "fedadam",
+    "fedavg",
+    "fedyogi"
+  ],
+  "clients_analyzed": [
+    1,
+    2,
+    3
+  ],
+  "summary": {
+    "fedadagrad": {
+      "total_rounds": 15,
+      "final_global_eval_loss": 1.1962270525096712,
+      "final_global_train_loss": 0.4382591123908544,
+      "improvement_percentage": 93.77165334498105,
+      "convergence_rate": -1.286424732218164,
+      "client_metrics": {
+        "client_1": {
+          "final_loss": 1.1680509370328314,
+          "best_loss": 0.217703305747478,
+          "worst_loss": 18.957030284356573,
+          "std_loss": 4.681829207617107
+        },
+        "client_2": {
+          "final_loss": 1.150672582701612,
+          "best_loss": 0.2212734450784573,
+          "worst_loss": 18.932797372015017,
+          "std_loss": 4.675596814348449
+        },
+        "client_3": {
+          "final_loss": 1.2494481904353056,
+          "best_loss": 0.209867385185991,
+          "worst_loss": 19.57474624520111,
+          "std_loss": 4.838556628923923
+        }
+      }
+    },
+    "fedadam": {
+      "total_rounds": 15,
+      "final_global_eval_loss": 0.1560345094727787,
+      "final_global_train_loss": 0.1972525827726594,
+      "improvement_percentage": 97.12799045102479,
+      "convergence_rate": -0.3769217060554621,
+      "client_metrics": {
+        "client_1": {
+          "final_loss": 0.1458875911523879,
+          "best_loss": 0.0835339421986062,
+          "worst_loss": 5.382249455227798,
+          "std_loss": 1.8484206603017659
+        },
+        "client_2": {
+          "final_loss": 0.1337440844129229,
+          "best_loss": 0.1337440844129229,
+          "worst_loss": 5.351021169647612,
+          "std_loss": 1.8064345134463795
+        },
+        "client_3": {
+          "final_loss": 0.1798397919927301,
+          "best_loss": 0.1683287076966589,
+          "worst_loss": 5.528655487951025,
+          "std_loss": 1.7339022991384978
+        }
+      }
+    },
+    "fedavg": {
+      "total_rounds": 15,
+      "final_global_eval_loss": 0.0287140445294358,
+      "final_global_train_loss": 0.0192024900236471,
+      "improvement_percentage": 61.540457260083194,
+      "convergence_rate": -0.003281881805879086,
+      "client_metrics": {
+        "client_1": {
+          "final_loss": 0.0076994056823924,
+          "best_loss": 0.0076994056823924,
+          "worst_loss": 0.0368427900093579,
+          "std_loss": 0.007409390451527953
+        },
+        "client_2": {
+          "final_loss": 0.0307372670753214,
+          "best_loss": 0.030692253513573,
+          "worst_loss": 0.0818662658060358,
+          "std_loss": 0.013515713584314776
+        },
+        "client_3": {
+          "final_loss": 0.0503803147186466,
+          "best_loss": 0.0481424112060398,
+          "worst_loss": 0.1060381509767156,
+          "std_loss": 0.015022080326423382
+        }
+      }
+    },
+    "fedyogi": {
+      "total_rounds": 15,
+      "final_global_eval_loss": 1.853633488592214,
+      "final_global_train_loss": 0.2682511752481348,
+      "improvement_percentage": -2791.932246877602,
+      "convergence_rate": 0.12782405545833522,
+      "client_metrics": {
+        "client_1": {
+          "final_loss": 1.8225534612436136,
+          "best_loss": 0.0204718110665292,
+          "worst_loss": 1.8225534612436136,
+          "std_loss": 0.5318605152645554
+        },
+        "client_2": {
+          "final_loss": 1.8061504191653368,
+          "best_loss": 0.0174587744032885,
+          "worst_loss": 1.8061504191653368,
+          "std_loss": 0.5271335543350293
+        },
+        "client_3": {
+          "final_loss": 1.9101591192652327,
+          "best_loss": 0.0267864654220201,
+          "worst_loss": 1.9101591192652327,
+          "std_loss": 0.5604301325278818
+        }
+      }
+    }
+  }
+}
