@@ -49,7 +49,7 @@ num-layers = 1
 # Configurações de Séries Temporais
 sequence-length = 60
 prediction-length = 200
-target-column = "P_kW"
+target-column = "vehicle_speed"
 
 # Configurações de Treinamento
 batch-size = 32

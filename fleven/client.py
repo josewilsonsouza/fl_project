@@ -116,7 +116,10 @@ def initialize_client_state(client_id: int, context: Context):
     prediction_length = int(context.run_config.get("prediction-length", 10))
     batch_size = int(context.run_config.get("batch-size", 32))
     train_test_split = float(context.run_config.get("train-test-split", 0.8))
-    
+
+    target_column = str(context.run_config.get("target-column", "P_kW"))
+    print(f"[Cliente {client_id}] Configurado para prever a coluna: '{target_column}'")
+
     model_type = context.run_config.get("model-type", "lstm") ##
     input_size = int(context.run_config.get("input-size", 6))
     hidden_size = int(context.run_config.get("hidden-size", 50))
@@ -133,7 +136,8 @@ def initialize_client_state(client_id: int, context: Context):
         prediction_length,
         batch_size,
         train_test_split,
-        data_base_path=data_base_path
+        data_base_path=data_base_path,
+        target_column=target_column
     )
 
         # 🔧 Dicionário de configuração do modelo
