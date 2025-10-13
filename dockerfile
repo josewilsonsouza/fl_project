@@ -10,8 +10,8 @@ COPY . .
 # Instala as dependências
 RUN pip install --no-cache-dir -r requirements.txt
 
-ENV CLIENT_ID
-ENV SERVER_ADDRESS
+ENV CLIENT_ID=""
+ENV SERVER_ADDRESS=""
 
 # Comando para rodar a aplicação
 CMD python client.py --client-id $CLIENT_ID --server-address $SERVER_ADDRESS
