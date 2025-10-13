@@ -1,0 +1,106 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fleven"
+version = "1.0.0"
+description = "FLEVEn — Federated Learning for Vehicular Environment"
+license = {text = "Apache-2.0"}
+dependencies = [
+    "flwr[simulation]>=1.22.0,<2.0",
+    "torch>=2.0.0",
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "scikit-learn>=1.3.0",
+    "matplotlib>=3.7.0",
+    "seaborn>=0.12.0",
+    "toml"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["fleven"]
+
+[tool.flwr.app]
+publisher = "Lainf_Dmtic_Inmetro"
+
+[tool.flwr.app.components]
+serverapp = "fleven.server:app"
+clientapp = "fleven.client:app"
+
+[tool.flwr.app.config]
+# Configurações de Federação
+strategy = "fedavg"
+rounds = 10
+min-nodes = 3
+seed = 42
+
+# 🔧 Caminhos (ajustar conforme necessário). (deixar só "" parece que funciona)
+data-base-path = "C:/Users/abece/OneDrive/Documentos/fleven/data"
+metrics-base-path = "C:/Users/abece/OneDrive/Documentos/fleven/metrics"
+results-base-path = "C:/Users/abece/OneDrive/Documentos/fleven/results"
+
+# Escolha dos modelos do FLEVEn: "lstm", "mlp"
+model-type = "lstm"
+input-size = 6
+hidden-size = 50
+num-layers = 1
+
+# Configurações de Séries Temporais
+sequence-length = 60
+prediction-length = 200
+target-column = "P_kW"
+
+# Configurações de Treinamento
+batch-size = 32
+learning-rate = 1e-5
+local-epochs = 1
+max-grad-norm = 1.0
+
+# Configurações de Dados
+train-test-split = 0.8
+
+# Configurações de Checkpoint
+save-checkpoint-every = 5
+
+[tool.flwr.app.config.strategy-params]
+# Parâmetros para FedAdam
+eta = 0.01
+beta_1 = 0.9
+beta_2 = 0.999
+
+# Parâmetros para FedAdagrad
+eta_adagrad = 0.1
+initial_accumulator_value = 0.1
+
+# Parâmetros para FedYogi
+eta_yogi = 0.01
+beta_1_yogi = 0.9
+beta_2_yogi = 0.999
+initial_accumulator_value_yogi = 1e-6
+
+[tool.flwr.federations]
+default = "local-simulation"
+
+[tool.flwr.federations.local-simulation]
+options.num-supernodes = 3
+options.backend.client-resources.num-cpus = 2
+options.backend.client-resources.num-gpus = 0.0
+
+# essas configs vão ser importantes mais na frente, quando quisermos, 
+# por exemplo, outros parametros para certos clients
+#[[tool.flwr.federations.local-simulation.options.supernode.resources]]
+#node-config.partition-id = 1
+#node-config.num-partitions = 3
+
+#[[tool.flwr.federations.local-simulation.options.supernode.resources]]
+#node-config.partition-id = 2
+#node-config.num-partitions = 3
+
+#[[tool.flwr.federations.local-simulation.options.supernode.resources]]
+#node-config.partition-id = 3
+#node-config.num-partitions = 3
+
+[tool.flwr.federations.fleven-deployment]
+address = "127.0.0.1:9093"
+insecure = true
