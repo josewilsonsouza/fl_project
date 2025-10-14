@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Flower
+.flwr/
+*.fab
+
+# Dados grandes
+#data/*.csv
+#data/*.xlsx
+
+# Resultados
+results/
+metrics/
+logs/
+graphics/
+*.pt
+*.pth
