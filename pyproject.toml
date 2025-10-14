@@ -36,9 +36,9 @@ min-nodes = 3
 seed = 42
 
 # 🔧 Caminhos (ajustar conforme necessário). (deixar só "" parece que funciona)
-data-base-path = "C:/Users/abece/OneDrive/Documentos/fleven/data"
-metrics-base-path = "C:/Users/abece/OneDrive/Documentos/fleven/metrics"
-results-base-path = "C:/Users/abece/OneDrive/Documentos/fleven/results"
+data-base-path = "C:/Users/abece/Documents/fleven/data"
+metrics-base-path = "C:/Users/abece/Documents/fleven/metrics"
+results-base-path = "C:/Users/abece/Documents/fleven/results"
 
 # Escolha dos modelos do FLEVEn: "lstm", "mlp"
 model-type = "lstm"
