@@ -17,7 +17,7 @@ New-NetFirewallRule -DisplayName "FL Server 8080" -Direction Inbound -Protocol T
 
 3. **Prepare o ambiente:**
 ```powershell
-cd C:\fl_project
+cd C:\fleven_v0
 python -m venv venv
 .\venv\Scripts\activate
 pip install -r requirements.txt
@@ -34,8 +34,8 @@ python server.py --strategy fedavg --rounds 15
 
 1. **Clone e prepare:**
 ```bash
-git clone https://github.com/seu-usuario/fl_project.git
-cd fl_project
+git clone -b fleven_v0 --single-branch https://github.com/josewilsonsouza/fleven.git
+cd fleven_v0
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
@@ -109,7 +109,7 @@ netstat -an | findstr :8080
 Após conclusão, no servidor Windows:
 
 1. **Visualizar PDFs gerados:**
-   - Navegue até `C:\fl_project\results`
+   - Navegue até `C:\fleven_v0\results`
    - Abra os arquivos `.pdf` gerados
 
 2. **Análise detalhada:**

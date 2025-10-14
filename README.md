@@ -68,8 +68,8 @@ fl_project/
 ### 1. Clone o Repositório
 
 ```bash
-git clone https://github.com/seu-usuario/fl_project.git
-cd fl_project
+git clone -b fleven_v0 --single-branch https://github.com/josewilsonsouza/fleven.git
+cd fleven_v0
 ```
 
 ### 2. Crie um Ambiente Virtual
@@ -103,7 +103,7 @@ data/
 ```
 
 **Formato esperado dos CSVs:**
-- Colunas principais: `vehicle_speed`, `engine_rpm`, `accel_x`, `accel_y`, `P_kW`, `dt`
+- Colunas principais: `vehicle_speed`, `engine_rpm`, `accel_x`, `accel_y`, `dt`, `P_kW`
 - Cada arquivo representa um percurso diferente
 - Mínimo de 2 percursos por cliente recomendado
 
