@@ -1,7 +1,5 @@
 # FLEVEn — Federated Learning for Vehicular Environment
 
-## 📋 Visão Geral
-
 Este projeto implementa Aprendizado Federado para previsão de dados OBD, como energia, velocidade, rpm, etc. 
 Utiliza o framework [Flower](https://flower.ai) para orquestrar o treinamento colaborativo de modelos LSTM 
 em múltiplos nós, sem centralizar os dados. O objetivo é prever variáveis veiculares (ex: potência, velocidade) 
