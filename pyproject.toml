@@ -15,7 +15,8 @@ dependencies = [
     "scikit-learn>=1.3.0",
     "matplotlib>=3.7.0",
     "seaborn>=0.12.0",
-    "toml"
+    "toml",
+    "mlflow>=2.9.0"
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -36,9 +37,15 @@ min-nodes = 3
 seed = 42
 
 # 🔧 Caminhos (ajustar conforme necessário). (deixar só "" parece que funciona)
-data-base-path = "C:/Users/abece/Documents/fleven/data"
-metrics-base-path = "C:/Users/abece/Documents/fleven/metrics"
-results-base-path = "C:/Users/abece/Documents/fleven/results"
+data-base-path = "" #"C:/Users/abece/Documents/fleven-test/data"
+metrics-base-path = "" #"C:/Users/abece/Documents/fleven-test/metrics"
+results-base-path = "" #"C:/Users/abece/Documents/fleven-test/results"
+
+# Configurações MLflow
+mlflow-tracking-uri = "http://127.0.0.1:5000"  # URI do servidor MLflow
+mlflow-experiment-name = "FLEVEn-Experiments"
+mlflow-enable = true  # Habilitar/desabilitar MLflow
+
 
 # Escolha dos modelos do FLEVEn: "lstm", "mlp"
 model-type = "lstm"
@@ -47,8 +54,8 @@ hidden-size = 50
 num-layers = 1
 
 # Configurações de Séries Temporais
-sequence-length = 60
-prediction-length = 200
+sequence-length = 100
+prediction-length = 10
 target-column = "vehicle_speed"
 
 # Configurações de Treinamento

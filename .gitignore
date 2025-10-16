@@ -7,12 +7,11 @@ venv/
 .flwr/
 *.fab
 
-# Dados grandes
-#data/*.csv
-#data/*.xlsx
-
 # Resultados
 results/
 metrics/
+mlartifacts/
+mlruns/
+
 *.pt
 *.pth

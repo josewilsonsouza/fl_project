@@ -1,7 +1,9 @@
-* Ver qual a melhor forma de chamar os dados. quando fazemos `flwr run .` funcionaria mesmo com: 
-    * data-base-path = "" 
-    * metrics-base-path = ""
-    * results-base-path = ""
+# Info
+* Comando que gera `estrutura.txt`: `tree /F /A > estrutura.txt` (no powershell)
+* Optuna para o caso distribuído parece interessante
 
-* Comando que gera `estrutura.txt`: `tree /F /A > estrutura.txt` (no powershell).
-* Os modelos usados são até o momentosão dois, LSTM e MLP. Talvez inserir mais modelos vai ser uma boa, inclusive o DCAINet
+# ToDo
+* testar no dados eVED e VED
+* Incorporar o DCAINet
+* Incorporar GRU
+* Criar cenário com fluxo de dados

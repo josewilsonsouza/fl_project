@@ -2,80 +2,78 @@
 
 ## 📋 Visão Geral
 
-Este projeto implementa Aprendizado Federado para previsão de dados OBD, como energia. 
-Utiliza o framework Flower para orquestrar o treinamento colaborativo de modelos LSTM 
+Este projeto implementa Aprendizado Federado para previsão de dados OBD, como energia, velocidade, rpm, etc. 
+Utiliza o framework [Flower](https://flower.ai) para orquestrar o treinamento colaborativo de modelos LSTM 
 em múltiplos nós, sem centralizar os dados. O objetivo é prever variáveis veiculares (ex: potência, velocidade) 
-a partir de séries temporais coletadas de diferentes clientes, promovendo privacidade e escalabilidade.
+a partir de séries temporais coletadas de diferentes clientes, promovendo privacidade e escalabilidade. Essa também permite 
+visualização do desempenho dos clientes e permite testar diversas estratégias, tudo isso por contar com a integração com o [MLflow](https://mlflow.org/) 
+facilidado o FLOps (uma adaptação apropriad do MLOps).
 
-## 🎯 Vantagens da Configuração Centralizada
+Resumo das pastas
 
-✅ **Fácil de manter**: Todas as configurações em um único lugar  
-✅ **Flexível**: Altere parâmetros sem modificar código  
-✅ **Reproduzível**: Documente configurações de experimentos  
-✅ **Versionável**: Track de mudanças no Git  
+- `/analysis`: contém um arquivo `.py` que verifica a estrutura e treina uma pequena rede para ver se as configurações do `pyproject.toml` estão ok.
+- `/data`: dados utilizados nos testes
+- `/docs`: imagens e SETUP
+- `fleven`: scripts `.py` do projeto FLEVEn
 
-## ⚙️ Configurações Disponíveis
+## 🚀 Como usar o FLEVEn (com MLflow)
 
-### 1. Configurações de Federação
+Primeiro clone este repositório
 
-```toml
-[tool.flwr.app.config]
-strategy = "fedavg"          # Estratégia: fedavg, fedadam, fedyogi, fedadagrad
-rounds = 5                   # Número de rodadas de treinamento
-min-nodes = 3                # Número mínimo de nós necessários
+```bash
+git clone https://github.com/josewilsonsouza/fleven.git
+cd fleven
 ```
 
-### 2. Configurações do Modelo LSTM
+Crie um ambiente virtual
 
-```toml
-input-size = 6               # Número de features de entrada
-hidden-size = 50             # Tamanho da camada oculta LSTM
-num-layers = 1               # Número de camadas LSTM empilhadas
+```bash
+python -m venv venv
+```
+Ative-o
+
+```bash
+venv/Scripts/activate # no windowns
+
+source venv/bin/activate # no linux
 ```
 
-### 3. Configurações de Séries Temporais
+Com seu ambiente virtual `venv` ativado, instale as dependencias do projeto nele
 
-```toml
-sequence-length = 60         # Tamanho da janela de entrada (timesteps)
-prediction-length = 10       # Quantos timesteps prever no futuro
+```bash
+pip install -e .
 ```
 
-⚠️ **IMPORTANTE**: `prediction-length` deve corresponder ao `output_size` da rede!
+Em outro terminal, inicie o servidor *MLflow*
+```bash
+./start_mlflow
+```
+ou
 
-### 4. Configurações de Treinamento
-
-```toml
-batch-size = 32              # Tamanho do batch
-learning-rate = 1e-5         # Taxa de aprendizado
-local-epochs = 1             # Épocas de treino local por rodada
-max-grad-norm = 1.0          # Clip de gradiente
+```bash
+mlflow ui
 ```
 
-### 5. Configurações de Dados
-
-```toml
-train-test-split = 0.8       # Proporção treino/teste (80%/20%)
-```
-
-### 6. Configurações de Checkpoint
-
-```toml
-save-checkpoint-every = 5    # Salvar modelo a cada N rodadas
-```
-
-## 🚀 Como Usar
+Agora está quase pronto para iniciar o FLEVEn. Existem dois métodos de reproduzi-lo, seguindo o padrão de apps do [Flower](https://flower.ai).
 
 ### Método 1: Simulação Local (Recomendado para Testes)
 
 ```bash
-# Executa com configurações do pyproject.toml
+# Executa com configurações do pyproject.toml (onde o default é local-simulation)
 flwr run .
-
-# Ou especificamente a federação de simulação
+# ou
 flwr run . local-simulation
 ```
-
 ### Método 2: Deployment com SuperLink/SuperNodes
+
+Se escolher esse método, primeiro ajuste os caminhos especificados no `pyproject.toml` para conicidir com seu pc:
+
+```bash
+data-base-path = "C:/user/fleven/data"
+metrics-base-path = "C:/user/fleven/metrics"
+results-base-path = "C:/user/fleven/results"
+```
+Agora rode
 
 #### Terminal 1 - SuperLink
 ```bash
@@ -104,12 +102,26 @@ flower-supernode --insecure --superlink 127.0.0.1:9092 \
 ```bash
 flwr run . fleven-deployment --stream
 ```
-C:\Users\abece\OneDrive\Documentos\fleven\data\client_1\trajeto_1.csv
+
+## Visualizando os resultados
+
+Você pode acompanhar o desempenho do servidor e dos clientes de duas formas. A mais direta é ir até a pasta `results` criada na raiz do projeto.
+A forma mais interessante e que será usada para você ver a evolução do modelo com mudanças de configurações é atraves do MLflow, através da UI.
+Acesse
+
+```bash
+http://127.0.0.1:500
+```
+Veja a documentação oficial do [MLflow](https://mlflow.org/) para mais detalhes da interface.
+
+![Print da UI do MLflow para o FLEVEn](/images/mlflow_print.png)
+
+
 ## 🔧 Alterando Configurações
 
 ### Opção 1: Editar pyproject.toml
 
-Edite o arquivo `pyproject.toml` e rode novamente:
+Edite o arquivo `pyproject.toml` e rode novamente (e acompanhe as mudanças no mlflow):
 
 ```toml
 [tool.flwr.app.config]
@@ -130,13 +142,13 @@ flwr run . --run-config "rounds=10 learning-rate=1e-4 prediction-length=15"
 
 ```
 data/
+├── client_0/
+│   ├── route1.csv
+│   └── route2.csv
 ├── client_1/
 │   ├── route1.csv
 │   └── route2.csv
-├── client_2/
-│   ├── route1.csv
-│   └── route2.csv
-└── client_3/
+└── client_2/
     ├── route1.csv
     └── route2.csv
 ```
@@ -151,7 +163,7 @@ Cada CSV deve conter as colunas:
 
 ## 📈 Resultados
 
-Após a execução, os resultados serão salvos em:
+Após a execução, os resultados serão salvos na pasta raiz, mas varias opções ficarão disponiveis no mlflow, de todos os testes.
 
 ```
 results/
@@ -167,52 +179,20 @@ results/
 Métricas locais de cada cliente:
 ```
 metrics/
-├── client_1/
+├── client_0/
 │   ├── metrics_history.json
 │   └── model_round_5.pt
-├── client_2/
+├── client_1/
 │   └── ...
-└── client_3/
+└── client_2/
     └── ...
 ```
-
-## 🧪 Exemplos de Experimentos
-
-### Experimento 1: Previsão de Curto Prazo
-```toml
-prediction-length = 5
-sequence-length = 30
-learning-rate = 1e-4
-```
-
-## 🐛 Troubleshooting
-
-### Erro: Dimensões não correspondem
-```
-RuntimeError: The size of tensor a (10) must match the size of tensor b (200)
-```
-
-**Solução**: Verifique que `prediction-length` no `pyproject.toml` corresponde ao tamanho esperado dos labels.
-
-### Erro: Dados insuficientes
-```
-ValueError: A divisão de dados resultou em um conjunto vazio
-```
-
-**Solução**: Certifique-se de que cada cliente tem pelo menos `sequence-length + prediction-length` linhas de dados.
-
-### Erro: Poucos nós conectados
-```
-INFO: Waiting for at least 3 nodes to connect...
-```
-
-**Solução**: Verifique que você iniciou pelo menos `min-nodes` SuperNodes.
 
 ## 📝 Notas Adicionais
 
 ### 🔐 Segurança (Produção)
 
-Para ambientes de produção, **NUNCA use `--insecure`**. Configure TLS:
+Para ambientes de produção, **NUNCA usar `--insecure`**. Configure TLS:
 
 ```toml
 [tool.flwr.federations.production]

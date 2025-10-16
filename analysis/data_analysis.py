@@ -223,7 +223,7 @@ def test_training_and_evaluation_step(net, config, client_id=1):
         traceback.print_exc()
         return False
 
-# <<< ADICIONADO: Nova função para testar o desempenho ao longo de várias épocas >>>
+#função para testar o desempenho ao longo de várias épocas
 def test_multi_epoch_performance(config, client_id=1, num_epochs=5):
     """Simula um treinamento por várias épocas para observar a queda da perda."""
     print(f"\n📈 Testando Desempenho Multi-Época (por {num_epochs} épocas)...")
@@ -293,7 +293,6 @@ def print_config_summary(config):
     print("RESUMO DAS CONFIGURAÇÕES")
     print("="*60)
     
-    # ... (conteúdo da função inalterado) ...
     print("\n📋 Federação:")
     print(f"  • Estratégia: {config.get('strategy', 'fedavg')}")
     print(f"  • Rodadas: {config.get('rounds', 5)}")
@@ -348,7 +347,6 @@ def main():
     tests_passed.append(("Passo de Treino e Avaliação", success))
     if not success: sys.exit(1)
 
-    # <<< ADICIONADO: Chamada para o novo teste de desempenho >>>
     success = test_multi_epoch_performance(config)
     tests_passed.append(("Desempenho Multi-Época", success))
     
