@@ -3,16 +3,16 @@
 Este projeto implementa Aprendizado Federado para previsão de dados OBD, como energia, velocidade, rpm, etc. 
 Utiliza o framework [Flower](https://flower.ai) para orquestrar o treinamento colaborativo de modelos LSTM 
 em múltiplos nós, sem centralizar os dados. O objetivo é prever variáveis veiculares (ex: potência, velocidade) 
-a partir de séries temporais coletadas de diferentes clientes, promovendo privacidade e escalabilidade. Essa também permite 
+a partir de séries temporais coletadas de diferentes clientes, promovendo privacidade e escalabilidade. Essa aplicação também permite 
 visualização do desempenho dos clientes e permite testar diversas estratégias, tudo isso por contar com a integração com o [MLflow](https://mlflow.org/) 
-facilidado o FLOps (uma adaptação apropriad do MLOps).
+facilidado o FLOps (uma adaptação apropriada do MLOps).
 
 Resumo das pastas
 
 - `/analysis`: contém um arquivo `.py` que verifica a estrutura e treina uma pequena rede para ver se as configurações do `pyproject.toml` estão ok.
 - `/data`: dados utilizados nos testes
-- `/docs`: imagens e SETUP
-- `fleven`: scripts `.py` do projeto FLEVEn
+- `/images`: imagens
+- `/fleven`: scripts `.py` do projeto FLEVEn
 
 ## 🚀 Como usar o FLEVEn (com MLflow)
 
