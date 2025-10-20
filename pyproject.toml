@@ -6,6 +6,29 @@ build-backend = "hatchling.build"
 name = "fleven"
 version = "1.0.0"
 description = "FLEVEn — Federated Learning for Vehicular Environment"
+
+readme = "README.md"
+keywords = ["federated-learning", "flower", "mlflow", "federated-learning-vehicular", "time-series", "lstm", "pytorch", "obd"]
+classifiers = [
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+authors = [
+    {name = "João C. Braz", email = "calbraz@gmail.com"},
+    {name = "José Wilson C. Souza", email = "josewilson@matematica.ufrj.br"},
+    {name = "Erick de Souza Lima", email = "erickcefetbcc@gmail.com"},
+    {name = "Mina", email = "minammonteiro4@gmail.com"},
+]
+
+maintainers = [
+    {name = "José Wilson C. Souza", email = "josewilson@matematica.ufrj.br"}
+]
+
 license = {text = "Apache-2.0"}
 dependencies = [
     "flwr[simulation]>=1.22.0,<2.0",
@@ -19,6 +42,10 @@ dependencies = [
     "mlflow>=2.9.0"
 ]
 
+[project.urls]
+Repository = "https://github.com/josewilsonsouza/fleven"
+"Issue Tracker" = "https://github.com/josewilsonsouza/fleven/issues"
+
 [tool.hatch.build.targets.wheel]
 packages = ["fleven"]
 
@@ -31,7 +58,7 @@ clientapp = "fleven.client:app"
 
 [tool.flwr.app.config]
 # Configurações de Federação
-strategy = "fedavg"
+strategy = "fedavg"  # Opções: "fedavg", "fedadam", "fedadagrad", "fedyogi"
 rounds = 10
 min-nodes = 3
 seed = 42
@@ -47,15 +74,24 @@ mlflow-experiment-name = "FLEVEn-Experiments"
 mlflow-enable = true  # Habilitar/desabilitar MLflow
 
 
-# Escolha dos modelos do FLEVEn: "lstm", "mlp"
-model-type = "lstm"
-input-size = 6
-hidden-size = 50
+# Escolha dos modelos do FLEVEn: "lstm", "lstm_dense", "mlp"
+model-type = "lstm_dense"
+
+# Parâmetros para "lstm" e "mlp"
+hidden-size = 32
+
+# Parâmetros para "lstm_dense" (o novo modelo adaptado)
+lstm-hidden-size = 32  # Tamanho da camada LSTM
+dense-hidden-size = 16 # Tamanho da camada Densa intermediária
+
+# Parâmetros para "lstm" e "lstm_dense"
+input-size = 3
 num-layers = 1
+dropout = 0.2  # Taxa de dropout (0.0 para desativar)
 
 # Configurações de Séries Temporais
 sequence-length = 100
-prediction-length = 10
+prediction-length = 50
 target-column = "vehicle_speed"
 
 # Configurações de Treinamento

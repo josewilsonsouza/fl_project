@@ -15,3 +15,7 @@ mlruns/
 
 *.pt
 *.pth
+
+# Jupyter Notebooks
+*.ipynb_checkpoints
+DataClientCreate.ipynb

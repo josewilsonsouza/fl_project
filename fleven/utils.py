@@ -3,6 +3,7 @@ import numpy as np
 import random
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from torch.utils.data import TensorDataset, DataLoader
 from sklearn.preprocessing import MinMaxScaler
 from pathlib import Path
@@ -16,28 +17,56 @@ def set_seed(seed: int):
         torch.cuda.manual_seed_all(seed)
 
 # LSTM
-class Net(torch.nn.Module):
-    def __init__(self, input_size, hidden_size, output_size, num_layers=1):
-        super(Net, self).__init__()
-        self.lstm = torch.nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
-        self.linear = torch.nn.Linear(hidden_size, output_size)
-
-    def forward(self, x):
-        lstm_out, _ = self.lstm(x)
-        last_time_step_out = lstm_out[:, -1, :]
-        out = self.linear(last_time_step_out)
-        return out
-
 class LSTMNet(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size, num_layers=1):
+    def __init__(self, input_size, hidden_size, output_size, num_layers=1, dropout=0.0):
         super(LSTMNet, self).__init__()
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
+        self.lstm = nn.LSTM(
+            input_size, 
+            hidden_size, 
+            num_layers, 
+            batch_first=True,
+            # Dropout entre camadas LSTM empilhadas (se num_layers > 1)
+            dropout=dropout if num_layers > 1 else 0.0
+        )
         self.linear = nn.Linear(hidden_size, output_size)
 
     def forward(self, x):
         lstm_out, _ = self.lstm(x)
         last_time_step_out = lstm_out[:, -1, :]
         out = self.linear(last_time_step_out)
+        return out
+    
+# LSTM -> Dropout -> Dense(ReLU) -> Dense(Output)
+class LSTMDenseNet(nn.Module):
+    def __init__(self, input_size, lstm_hidden_size, dense_hidden_size, output_size, num_layers=1, dropout=0.0):
+        super(LSTMDenseNet, self).__init__()
+        self.lstm = nn.LSTM(
+            input_size, 
+            lstm_hidden_size, 
+            num_layers, 
+            batch_first=True,
+            dropout=dropout if num_layers > 1 else 0.0
+        )
+        # Dropout aplicado à saída da camada LSTM
+        self.dropout = nn.Dropout(dropout)
+        self.fc1 = nn.Linear(lstm_hidden_size, dense_hidden_size)
+        self.fc2 = nn.Linear(dense_hidden_size, output_size)
+
+    def forward(self, x):
+        # lstm_out shape: (batch_size, seq_len, lstm_hidden_size)
+        lstm_out, _ = self.lstm(x)
+        
+        # saída do último passo de tempo
+        # (batch_size, lstm_hidden_size)
+        last_time_step_out = lstm_out[:, -1, :]
+        
+        # Aplica dropout
+        out = self.dropout(last_time_step_out)
+        
+        # Passa pelas camadas densas
+        out = self.fc1(out)
+        out = F.relu(out) # Aplicando ReLU como no notebook
+        out = self.fc2(out)
         return out
 
 # MLP
@@ -115,7 +144,7 @@ def load_data(client_id: int, sequence_length: int, prediction_length: int,
     all_routes_df = [pd.read_csv(f) for f in csv_files]
     combined_df = pd.concat(all_routes_df, ignore_index=True)
 
-    all_columns = ['vehicle_speed', 'engine_rpm', 'accel_x', 'accel_y', 'P_kW', 'dt']
+    all_columns = ['vehicle_speed', 'engine_rpm', 'P_kW']
     
     # se a coluna alvo existe
     if target_column not in all_columns:
@@ -220,20 +249,35 @@ def get_model(model_config: dict):
     model_type = model_config.get("name", "lstm").lower()
     
     if model_type == "lstm":
-        print(f"Criando modelo LSTMNet...")
+        print(f"Criando modelo LSTMNet (Simples: LSTM -> Linear)...")
+        # Modelo original do projeto, agora com dropout
         return LSTMNet(
             input_size=model_config["input_size"],
-            hidden_size=model_config["hidden_size"],
+            hidden_size=model_config["hidden_size"], # Usa 'hidden_size'
             output_size=model_config["output_size"],
-            num_layers=model_config["num_layers"]
+            num_layers=model_config.get("num_layers", 1),
+            dropout=model_config.get("dropout", 0.0)
         )
+    
+    elif model_type == "lstm_dense":
+        print(f"Criando modelo LSTMDenseNet (Adaptado: LSTM -> Dense -> Linear)...")
+        # modelo adaptado de um dos notebook do DACAI
+        return LSTMDenseNet(
+            input_size=model_config["input_size"],
+            lstm_hidden_size=model_config["lstm_hidden_size"],   # <-- Novo parâmetro pro pyproject tbm
+            dense_hidden_size=model_config["dense_hidden_size"], # <-- Novo parâmetro pro pyproject tbm
+            output_size=model_config["output_size"],
+            num_layers=model_config.get("num_layers", 1),
+            dropout=model_config.get("dropout", 0.0)
+        )
+
     elif model_type == "mlp":
         print(f"Criando modelo MLPNet...")
         # Para o MLP, o tamanho da entrada é a sequência inteira achatada
         mlp_input_size = model_config["sequence_length"] * model_config["input_size"]
         return MLPNet(
             input_size=mlp_input_size,
-            hidden_size=model_config["hidden_size"],
+            hidden_size=model_config["hidden_size"], # Usa 'hidden_size'
             output_size=model_config["output_size"]
         )
     else:

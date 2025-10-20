@@ -115,7 +115,6 @@ app = ServerApp()
 def main(grid: Grid, context: Context) -> None:
     """Função principal do servidor - lê todas as configurações do Context."""
 
-    #   Inicializa mflow
     mlflow_tracker = get_mlflow_tracker(context)
     
     seed = int(context.run_config.get("seed", 42))
@@ -126,15 +125,27 @@ def main(grid: Grid, context: Context) -> None:
     num_rounds = int(context.run_config.get("rounds", 5))
     min_nodes = int(context.run_config.get("min-nodes", 3))
     
+    
     # 🔧 Configurações do modelo
     model_type = context.run_config.get("model-type", "lstm")
     input_size = int(context.run_config.get("input-size", 6))
-    hidden_size = int(context.run_config.get("hidden-size", 50))
     prediction_length = int(context.run_config.get("prediction-length", 10))
     num_layers = int(context.run_config.get("num-layers", 1))
     sequence_length = int(context.run_config.get("sequence-length", 60))
     target_column = str(context.run_config.get("target-column", "P_kW"))
     
+    # Parâmetros para "lstm" e "mlp"
+    hidden_size = int(context.run_config.get("hidden-size", 32))
+    
+    # Parâmetros para "lstm_dense" (o novo modelo adaptado)
+    lstm_hidden_size = int(context.run_config.get("lstm-hidden-size", 32))
+    dense_hidden_size = int(context.run_config.get("dense-hidden-size", 16))
+    
+    # Parâmetro de Dropout para "lstm" e "lstm_dense"
+    dropout = float(context.run_config.get("dropout", 0.0))
+    
+    # --- FIM DA ALTERAÇÃO 1 ---
+
     # Configurações de treino
     batch_size = int(context.run_config.get("batch-size", 32))
     learning_rate = float(context.run_config.get("learning-rate", 1e-5))
@@ -163,7 +174,7 @@ def main(grid: Grid, context: Context) -> None:
             "target": target_column
         }
     )
-    
+        
     #   Log dos parâmetros no MLflow
     mlflow_tracker.log_params({
         "strategy": strategy_name,
@@ -171,7 +182,6 @@ def main(grid: Grid, context: Context) -> None:
         "min_nodes": min_nodes,
         "model_type": model_type,
         "input_size": input_size,
-        "hidden_size": hidden_size,
         "prediction_length": prediction_length,
         "num_layers": num_layers,
         "sequence_length": sequence_length,
@@ -180,7 +190,13 @@ def main(grid: Grid, context: Context) -> None:
         "learning_rate": learning_rate,
         "local_epochs": local_epochs,
         "train_test_split": train_test_split,
-        "seed": seed
+        "seed": seed,
+        
+        # Novos parâmetros
+        "hidden_size": hidden_size,
+        "lstm_hidden_size": lstm_hidden_size,
+        "dense_hidden_size": dense_hidden_size,
+        "dropout": dropout
     })
     
     print(f"\n{'='*60}")
@@ -191,23 +207,35 @@ def main(grid: Grid, context: Context) -> None:
     print(f"Nós mínimos: {min_nodes}")
     print(f"Modelo: {model_type.upper()}")
     print(f"Tamanho da Previsão: {prediction_length}")
-    print(f"Tamanho Hidden: {hidden_size}")
+    print(f"Tamanho Hidden (lstm/mlp): {hidden_size}")
+    print(f"Tamanho LSTM Hidden (lstm_dense): {lstm_hidden_size}")
+    print(f"Tamanho Dense Hidden (lstm_dense): {dense_hidden_size}")
     print(f"Número de Camadas do Modelo: {num_layers}")
+    print(f"Dropout: {dropout}")
     print(f"Target Column: {target_column}")
     print(f"Resultados serão salvos em: {output_dir.absolute()}")
     print(f"{'='*60}\n")
     
     # 🔧 Cria coletor de métricas
     collector = MetricsCollector(strategy_name)
-
+    
     # 🔧 Cria o dicionário de configuração do modelo
     model_config = {
         "name": model_type,
         "input_size": input_size,
-        "hidden_size": hidden_size,
         "output_size": prediction_length,
         "num_layers": num_layers,
-        "sequence_length": sequence_length
+        "sequence_length": sequence_length,
+        
+        # Parâmetros para "lstm" e "mlp"
+        "hidden_size": hidden_size,
+        
+        # Parâmetros para "lstm_dense"
+        "lstm_hidden_size": lstm_hidden_size,
+        "dense_hidden_size": dense_hidden_size,
+        
+        # Parâmetro de Dropout
+        "dropout": dropout
     }
     
     # 🔧 Cria modelo inicial

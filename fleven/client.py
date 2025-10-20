@@ -1,7 +1,7 @@
 import torch
 from flwr.app import Context, Message, ArrayRecord, MetricRecord, RecordDict
 from flwr.clientapp import ClientApp
-from fleven.utils import Net, get_model, load_data, train, test, set_seed
+from fleven.utils import get_model, load_data, train, test, set_seed
 from pathlib import Path
 import json
 from datetime import datetime
@@ -120,11 +120,19 @@ def initialize_client_state(client_id: int, context: Context):
     target_column = str(context.run_config.get("target-column", "P_kW"))
     print(f"[Cliente {client_id}] Configurado para prever a coluna: '{target_column}'")
 
-    model_type = context.run_config.get("model-type", "lstm") ##
-    input_size = int(context.run_config.get("input-size", 6))
-    hidden_size = int(context.run_config.get("hidden-size", 50))
+    model_type = context.run_config.get("model-type", "lstm")
     num_layers = int(context.run_config.get("num-layers", 1))
+
+    # Parâmetros para "lstm" e "mlp"
+    hidden_size = int(context.run_config.get("hidden-size", 32))
     
+    # Parâmetros para "lstm_dense" (o novo modelo adaptado)
+    lstm_hidden_size = int(context.run_config.get("lstm-hidden-size", 32))
+    dense_hidden_size = int(context.run_config.get("dense-hidden-size", 16))
+    
+    # Parâmetro de Dropout para "lstm" e "lstm_dense"
+    dropout = float(context.run_config.get("dropout", 0.0))
+        
     # 🔧 Lê os caminhos configurados
     data_base_path = context.run_config.get("data-base-path", None)
     metrics_base_path = context.run_config.get("metrics-base-path", None)
@@ -140,24 +148,28 @@ def initialize_client_state(client_id: int, context: Context):
         target_column=target_column
     )
 
-        # 🔧 Dicionário de configuração do modelo
+    # -todos os parâmetros para o model_config::
+    
+    # 🔧 Dicionário de configuração do modelo
     model_config = {
         "name": model_type,
-        "input_size": num_features, # Usa o num_features retornado pelo load_data
-        "hidden_size": hidden_size,
+        "input_size": num_features, # retornado pelo load_data
         "output_size": prediction_length,
         "num_layers": num_layers,
-        "sequence_length": sequence_length
+        "sequence_length": sequence_length,
+        
+        # Parâmetros para "lstm" e "mlp"
+        "hidden_size": hidden_size,
+        
+        # Parâmetros para "lstm_dense"
+        "lstm_hidden_size": lstm_hidden_size,
+        "dense_hidden_size": dense_hidden_size,
+        
+        # Parâmetro de Dropout
+        "dropout": dropout
     }
-    
+        
     # Cria rede com as configurações
-    #net = Net(
-    #    input_size=num_features, 
-    #    hidden_size=hidden_size, 
-    #    output_size=prediction_length,
-    #    num_layers=num_layers
-    #).to(DEVICE)
-
     net = get_model(model_config).to(DEVICE)
     
     model_state.update({
