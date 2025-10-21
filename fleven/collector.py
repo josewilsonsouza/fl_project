@@ -1,6 +1,9 @@
 """Coletor de métricas para análise de treinamento federado."""
 import numpy as np
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 class MetricsCollector:
     """Coleta e organiza métricas de treinamento e validação."""

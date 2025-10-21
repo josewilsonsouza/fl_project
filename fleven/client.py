@@ -6,7 +6,10 @@ from pathlib import Path
 import json
 from datetime import datetime
 
-# Verifica se a GPU está disponível
+import logging
+
+logger = logging.getLogger(__name__)
+
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class MetricsTracker:
@@ -15,7 +18,7 @@ class MetricsTracker:
     def __init__(self, client_id, metrics_base_path=None):
         self.client_id = client_id
         
-        # 🔧 Define o diretório de métricas de forma robusta
+        # diretório de métricas
         if metrics_base_path:
             # Usa o caminho configurado
             self.metrics_dir = Path(metrics_base_path) / f"client_{self.client_id}"
@@ -145,10 +148,8 @@ def initialize_client_state(client_id: int, context: Context):
         batch_size,
         train_test_split,
         data_base_path=data_base_path,
-        target_column=target_column
+        target_column=target_column,
     )
-
-    # -todos os parâmetros para o model_config::
     
     # 🔧 Dicionário de configuração do modelo
     model_config = {

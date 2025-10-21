@@ -11,6 +11,10 @@ import json
 from datetime import datetime
 from fleven.collector import MetricsCollector
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 plt.style.use('seaborn-v0_8-darkgrid')
 sns.set_palette("husl")
 

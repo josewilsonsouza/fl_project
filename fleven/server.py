@@ -14,13 +14,24 @@ from fleven.collector import MetricsCollector
 from fleven.analysis import create_visualizations, save_detailed_metrics, print_final_summary
 from fleven.mlflow_utils import get_mlflow_tracker  #   import do fmlfow
 
+import logging
+import sys
+
+# Configuração do logging
+logging.basicConfig(
+    level=logging.INFO,        # Nível mínimo para exibir (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    stream=sys.stdout,         # Garante que vá para o console (bom para Docker/HF Spaces)
+    # filename='fleven_app.log', 
+    # filemode='a' # 'a' para append, 'w' para sobrescrever
+)
+logger = logging.getLogger(__name__)
+
 STRATEGIES = {
     "fedavg": FedAvg,
     "fedadam": FedAdam,
     "fedyogi": FedYogi,
     "fedadagrad": FedAdagrad,
 }
-
 
 def get_custom_strategy_class(base_strategy_class):
     """Cria dinamicamente uma classe CustomStrategy que herda da estratégia base."""
@@ -31,7 +42,7 @@ def get_custom_strategy_class(base_strategy_class):
             self.collector = collector
             self.mlflow_tracker = mlflow_tracker  #   Adicionar tracker
             strategy_name = self.__class__.__bases__[0].__name__
-            print(f"CustomStrategy (coletando métricas para {strategy_name}) inicializada.")
+            logger.info(f"CustomStrategy (coletando métricas para {strategy_name}) inicializada.")
 
         def aggregate_train(self, server_round: int, replies: Iterable[Message]) -> tuple[Optional[ArrayRecord], Optional[MetricRecord]]:
             aggregated_arrays, aggregated_metrics = super().aggregate_train(server_round, replies)
@@ -43,7 +54,7 @@ def get_custom_strategy_class(base_strategy_class):
                         metrics = reply.content["metrics"]
                         client_id = int(metrics.get("client_id", 0))
                         train_loss = float(metrics.get("train_loss", 0.0))
-                        print(f"    > Detalhe Cliente {client_id}: Perda de Treino = {train_loss:.6f}")
+                        logger.info(f"    > Detalhe Cliente {client_id}: Perda de Treino = {train_loss:.6f}")
                         individual_losses[f"client_{client_id}_train_loss"] = train_loss
                         
                         #   Log no MLflow - métricas individuais
@@ -79,7 +90,7 @@ def get_custom_strategy_class(base_strategy_class):
                         metrics = reply.content["metrics"]
                         client_id = int(metrics.get("client_id", 0))
                         eval_loss = float(metrics.get("eval_loss", 0.0))
-                        print(f"    > Detalhe Cliente {client_id}: Perda de Avaliação = {eval_loss:.6f}")
+                        logger.info(f"    > Detalhe Cliente {client_id}: Perda de Avaliação = {eval_loss:.6f}")
                         individual_losses[f"client_{client_id}_eval_loss"] = eval_loss
                         
                         # Log no MLflow - métricas individuais
@@ -144,8 +155,6 @@ def main(grid: Grid, context: Context) -> None:
     # Parâmetro de Dropout para "lstm" e "lstm_dense"
     dropout = float(context.run_config.get("dropout", 0.0))
     
-    # --- FIM DA ALTERAÇÃO 1 ---
-
     # Configurações de treino
     batch_size = int(context.run_config.get("batch-size", 32))
     learning_rate = float(context.run_config.get("learning-rate", 1e-5))

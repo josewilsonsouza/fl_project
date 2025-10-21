@@ -10,7 +10,6 @@ description = "FLEVEn — Federated Learning for Vehicular Environment"
 readme = "README.md"
 keywords = ["federated-learning", "flower", "mlflow", "federated-learning-vehicular", "time-series", "lstm", "pytorch", "obd"]
 classifiers = [
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "License :: OSI Approved :: Apache Software License",
@@ -61,7 +60,7 @@ clientapp = "fleven.client:app"
 strategy = "fedavg"  # Opções: "fedavg", "fedadam", "fedadagrad", "fedyogi"
 rounds = 10
 min-nodes = 3
-seed = 42
+seed = 64
 
 # 🔧 Caminhos (ajustar conforme necessário). (deixar só "" parece que funciona)
 data-base-path = "" #"C:/Users/abece/Documents/fleven-test/data"
@@ -69,13 +68,13 @@ metrics-base-path = "" #"C:/Users/abece/Documents/fleven-test/metrics"
 results-base-path = "" #"C:/Users/abece/Documents/fleven-test/results"
 
 # Configurações MLflow
-mlflow-tracking-uri = "http://127.0.0.1:5000"  # URI do servidor MLflow
+mlflow-tracking-uri = "https://jwsouza13-fleven.hf.space"  # URI do servidor MLflow
 mlflow-experiment-name = "FLEVEn-Experiments"
 mlflow-enable = true  # Habilitar/desabilitar MLflow
 
 
 # Escolha dos modelos do FLEVEn: "lstm", "lstm_dense", "mlp"
-model-type = "lstm_dense"
+model-type = "lstm"
 
 # Parâmetros para "lstm" e "mlp"
 hidden-size = 32
@@ -92,7 +91,7 @@ dropout = 0.2  # Taxa de dropout (0.0 para desativar)
 # Configurações de Séries Temporais
 sequence-length = 100
 prediction-length = 50
-target-column = "vehicle_speed"
+target-column = "P_kW"
 
 # Configurações de Treinamento
 batch-size = 32
@@ -101,7 +100,7 @@ local-epochs = 1
 max-grad-norm = 1.0
 
 # Configurações de Dados
-train-test-split = 0.8
+train-test-split = 0.7
 
 # Configurações de Checkpoint
 save-checkpoint-every = 5

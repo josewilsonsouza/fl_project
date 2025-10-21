@@ -11,4 +11,4 @@
 
 # Progress
 - Já tenho todos os dados do VED e eVED. Agora precisamos entender melhor como ele está
-- Proximo passo é criar mais clientes. Cada Trip será um cliente
+- Proximo passo é criar mais clientes. Cada VehId será um cliente

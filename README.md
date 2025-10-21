@@ -42,16 +42,6 @@ Com seu ambiente virtual `venv` ativado, instale as dependencias do projeto nele
 pip install -e .
 ```
 
-Em outro terminal, inicie o servidor *MLflow*
-```bash
-./start_mlflow
-```
-ou
-
-```bash
-mlflow ui
-```
-
 Agora está quase pronto para iniciar o FLEVEn. Existem dois métodos de reproduzi-lo, seguindo o padrão de apps do [Flower](https://flower.ai).
 
 ### Método 1: Simulação Local (Recomendado para Testes)
@@ -108,12 +98,12 @@ A forma mais interessante e que será usada para você ver a evolução do model
 Acesse
 
 ```bash
-http://127.0.0.1:500
+https://jwsouza13-fleven.hf.space/
 ```
+
 Veja a documentação oficial do [MLflow](https://mlflow.org/) para mais detalhes da interface.
 
 ![Print da UI do MLflow para o FLEVEn](/images/mlflow_print.png)
-
 
 ## 🔧 Alterando Configurações
 

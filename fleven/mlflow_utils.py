@@ -3,6 +3,10 @@ from pathlib import Path
 from typing import Dict, Optional
 import torch
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 """Utilitários para integração com MLflow."""
 
 class MLflowTracker:

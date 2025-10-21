@@ -18,4 +18,4 @@ mlruns/
 
 # Jupyter Notebooks
 *.ipynb_checkpoints
-DataClientCreate.ipynb
+AGDA_Clients.ipynb
