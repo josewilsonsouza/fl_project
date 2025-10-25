@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_8ccd4b786d69b99b9f915e8e5ba1acfb {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+        <script>
+        (function() {
+            // Esperar o mapa carregar completamente
+            var checkMap = setInterval(function() {
+                if (typeof map_8ccd4b786d69b99b9f915e8e5ba1acfb !== 'undefined') {
+                    clearInterval(checkMap);
+                    initAnimation();
+                }
+            }, 100);
+            
+            function initAnimation() {
+                var coords = [[42.2775583333, -83.6987497222], [42.2775583333, -83.6987497222], [42.2775583333, -83.6987497222], [42.2775583333, -83.6987497222], [42.2775583333, -83.6987497222], [42.2782552778, -83.6988030556], [42.2782552778, -83.6988030556], [42.2782552778, -83.6988030556], [42.2782552778, -83.6988030556], [42.2790125, -83.6989011111], [42.2790125, -83.6989011111], [42.2790125, -83.6989011111], [42.2790125, -83.6989011111], [42.2790125, -83.6989011111], [42.2798258333, -83.6990825], [42.2798258333, -83.6990825], [42.2798258333, -83.6990825], [42.2798258333, -83.6990825], [42.2806536111, -83.6993497222], [42.2806536111, -83.6993497222], [42.2806536111, -83.6993497222], [42.2806536111, -83.6993497222], [42.2806536111, -83.6993497222], [42.2806536111, -83.6993497222], [42.2814252778, -83.6996786111], [42.2814252778, -83.6996786111], [42.2814252778, -83.6996786111], [42.2814252778, -83.6996786111], [42.2821922222, -83.7000411111], [42.2821922222, -83.7000411111], [42.2821922222, -83.7000411111], [42.2821922222, -83.7000411111], [42.2821922222, -83.7000411111], [42.2821922222, -83.7000411111], [42.2821922222, -83.7000411111], [42.2821922222, -83.7000411111], [42.2829597222, -83.7005038889], [42.2829597222, -83.7005038889], [42.2829597222, -83.7005038889], [42.2829597222, -83.7005038889], [42.2829597222, -83.7005038889], [42.2838672222, -83.7011169444], [42.2838672222, -83.7011169444], [42.2838672222, -83.7011169444], [42.2838672222, -83.7011169444], [42.2845911111, -83.7016091667], [42.2845911111, -83.7016091667], [42.2845911111, -83.7016091667], [42.2845911111, -83.7016091667], [42.28548, -83.7022116667], [42.28548, -83.7022116667], [42.28548, -83.7022116667], [42.28548, -83.7022116667], [42.2862297222, -83.7027197222], [42.2862297222, -83.7027197222], [42.2862297222, -83.7027197222], [42.2862297222, -83.7027197222], [42.2862297222, -83.7027197222], [42.2862297222, -83.7027197222], [42.2862297222, -83.7027197222], [42.2869772222, -83.7031025], [42.2869772222, -83.7031025], [42.2869772222, -83.7031025], [42.2869772222, -83.7031025], [42.2869772222, -83.7031025], [42.2877736111, -83.7033411111], [42.2877736111, -83.7033411111], [42.2877736111, -83.7033411111], [42.2877736111, -83.7033411111], [42.2885552778, -83.70357], [42.2885552778, -83.70357], [42.2885552778, -83.70357], [42.2885552778, -83.70357], [42.2895066667, -83.7038441667], [42.2895066667, -83.7038441667], [42.2895066667, -83.7038441667], [42.2895066667, -83.7038441667], [42.2895066667, -83.7038441667], [42.2902852778, -83.7041030556], [42.2902852778, -83.7041030556], [42.2902852778, -83.7041030556], [42.2910025, -83.7044836111], [42.2910025, -83.7044836111], [42.2910025, -83.7044836111], [42.2916858333, -83.7049836111], [42.2916858333, -83.7049836111], [42.2916858333, -83.7049836111], [42.2916858333, -83.7049836111], [42.2923916667, -83.7053377778], [42.2923916667, -83.7053377778], [42.2923916667, -83.7053377778], [42.2923916667, -83.7053377778], [42.2923916667, -83.7053377778], [42.2923916667, -83.7053377778], [42.2931136111, -83.7052613889], [42.2931136111, -83.7052613889], [42.2931136111, -83.7052613889], [42.2931136111, -83.7052613889], [42.2937136111, -83.7049280556], [42.2937136111, -83.7049280556], [42.2937136111, -83.7049280556], [42.2937136111, -83.7049280556], [42.2937136111, -83.7049280556], [42.2937136111, -83.7049280556], [42.2937136111, -83.7049280556], [42.2943641667, -83.704695], [42.2943641667, -83.704695], [42.2943641667, -83.704695], [42.2943641667, -83.704695], [42.2943641667, -83.704695], [42.2943641667, -83.704695], [42.2948241667, -83.7045802778], [42.2948241667, -83.7045802778], [42.2948241667, -83.7045802778], [42.2948241667, -83.7045802778], [42.2948241667, -83.7045802778], [42.2948241667, -83.7045802778], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2950961111, -83.7045172222], [42.2950961111, -83.7045172222], [42.2950961111, -83.7045172222], [42.2950961111, -83.7045172222], [42.2950961111, -83.7045172222], [42.2950961111, -83.7045172222], [42.2950961111, -83.7045172222], [42.2950961111, -83.7045172222], [42.2950961111, -83.7045172222]];
+                var currentIndex = 0;
+                var isPlaying = false;
+                var animationSpeed = 50;
+                var intervalId = null;
+                
+                var pathColor = '#ff0000';
+                var markerColor = '#ffffff';
+                
+                // Camada para o trajeto percorrido
+                var traveledPath = L.polyline([], {
+                    color: pathColor,
+                    weight: 5,
+                    opacity: 0.9
+                }).addTo(map_8ccd4b786d69b99b9f915e8e5ba1acfb);
+                
+                // Marcador do carro
+                var carMarker = L.circleMarker(coords[0], {
+                    radius: 8,
+                    color: pathColor,
+                    weight: 3,
+                    fillColor: markerColor,
+                    fillOpacity: 1
+                }).addTo(map_8ccd4b786d69b99b9f915e8e5ba1acfb);
+                
+                window.updateAnimation = function() {
+                    if (currentIndex < coords.length) {
+                        carMarker.setLatLng(coords[currentIndex]);
+                        var traveled = coords.slice(0, currentIndex + 1);
+                        traveledPath.setLatLngs(traveled);
+                        
+                        document.getElementById('timeSlider').value = currentIndex;
+                        document.getElementById('timeDisplay').textContent = 
+                            'Ponto: ' + (currentIndex + 1) + ' / ' + coords.length;
+                        
+                        currentIndex++;
+                    } else {
+                        currentIndex = 0;
+                    }
+                };
+                
+                window.playAnimation = function() {
+                    if (!isPlaying) {
+                        isPlaying = true;
+                        document.getElementById('playBtn').innerHTML = '⏸ Pausar';
+                        intervalId = setInterval(window.updateAnimation, animationSpeed);
+                    }
+                };
+                
+                window.pauseAnimation = function() {
+                    isPlaying = false;
+                    document.getElementById('playBtn').innerHTML = '▶ Play';
+                    if (intervalId) {
+                        clearInterval(intervalId);
+                        intervalId = null;
+                    }
+                };
+                
+                window.togglePlay = function() {
+                    if (isPlaying) {
+                        window.pauseAnimation();
+                    } else {
+                        window.playAnimation();
+                    }
+                };
+                
+                window.resetAnimation = function() {
+                    window.pauseAnimation();
+                    currentIndex = 0;
+                    carMarker.setLatLng(coords[0]);
+                    traveledPath.setLatLngs([coords[0]]);
+                    document.getElementById('timeSlider').value = 0;
+                    document.getElementById('timeDisplay').textContent = 'Ponto: 1 / ' + coords.length;
+                };
+                
+                window.changeSpeed = function(value) {
+                    animationSpeed = 200 - value;
+                    document.getElementById('speedDisplay').textContent = 'Velocidade: ' + value + '%';
+                    
+                    if (isPlaying) {
+                        clearInterval(intervalId);
+                        intervalId = setInterval(window.updateAnimation, animationSpeed);
+                    }
+                };
+                
+                window.seekTo = function(index) {
+                    currentIndex = parseInt(index);
+                    carMarker.setLatLng(coords[currentIndex]);
+                    var traveled = coords.slice(0, currentIndex + 1);
+                    traveledPath.setLatLngs(traveled);
+                    document.getElementById('timeDisplay').textContent = 
+                        'Ponto: ' + (currentIndex + 1) + ' / ' + coords.length;
+                };
+                
+                // Auto-play
+                setTimeout(window.playAnimation, 1000);
+            }
+        })();
+        </script>
+        
+        <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
+                    background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+                    z-index: 1000; min-width: 400px;">
+            <div style="text-align: center; margin-bottom: 10px;">
+                <h4 style="margin: 0 0 10px 0;">🚗 Combustão - Cliente 0</h4>
+                <div id="timeDisplay" style="font-size: 14px; color: #666;">Ponto: 1 / 137</div>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 10px; justify-content: center;">
+                <button id="playBtn" onclick="togglePlay()" 
+                        style="padding: 10px 20px; font-size: 16px; cursor: pointer; border: none; 
+                               background: #ff0000; color: white; border-radius: 5px;">
+                    ▶ Play
+                </button>
+                <button onclick="resetAnimation()" 
+                        style="padding: 10px 20px; font-size: 16px; cursor: pointer; border: none;
+                               background: #666; color: white; border-radius: 5px;">
+                    🔄 Reiniciar
+                </button>
+            </div>
+            
+            <div style="margin-bottom: 10px;">
+                <input type="range" id="timeSlider" min="0" max="136" value="0" 
+                       oninput="seekTo(this.value)" 
+                       style="width: 100%;">
+            </div>
+            
+            <div>
+                <div id="speedDisplay" style="font-size: 12px; color: #666; margin-bottom: 5px;">
+                    Velocidade: 100%
+                </div>
+                <input type="range" id="speedSlider" min="10" max="190" value="100" 
+                       oninput="changeSpeed(this.value)" 
+                       style="width: 100%;">
+            </div>
+        </div>
+        
+    
+            <div class="folium-map" id="map_8ccd4b786d69b99b9f915e8e5ba1acfb" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_8ccd4b786d69b99b9f915e8e5ba1acfb = L.map(
+                "map_8ccd4b786d69b99b9f915e8e5ba1acfb",
+                {
+                    center: [42.28783561840511, -83.7026126236854],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 13,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_3152220ff60274417312bfb5b1ad1ca3 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_3152220ff60274417312bfb5b1ad1ca3.addTo(map_8ccd4b786d69b99b9f915e8e5ba1acfb);
+        
+    
+            var poly_line_e2a7bb24618f879dd73d7e9b0c2abd29 = L.polyline(
+                [[42.2775583333, -83.6987497222], [42.2775583333, -83.6987497222], [42.2775583333, -83.6987497222], [42.2775583333, -83.6987497222], [42.2775583333, -83.6987497222], [42.2782552778, -83.6988030556], [42.2782552778, -83.6988030556], [42.2782552778, -83.6988030556], [42.2782552778, -83.6988030556], [42.2790125, -83.6989011111], [42.2790125, -83.6989011111], [42.2790125, -83.6989011111], [42.2790125, -83.6989011111], [42.2790125, -83.6989011111], [42.2798258333, -83.6990825], [42.2798258333, -83.6990825], [42.2798258333, -83.6990825], [42.2798258333, -83.6990825], [42.2806536111, -83.6993497222], [42.2806536111, -83.6993497222], [42.2806536111, -83.6993497222], [42.2806536111, -83.6993497222], [42.2806536111, -83.6993497222], [42.2806536111, -83.6993497222], [42.2814252778, -83.6996786111], [42.2814252778, -83.6996786111], [42.2814252778, -83.6996786111], [42.2814252778, -83.6996786111], [42.2821922222, -83.7000411111], [42.2821922222, -83.7000411111], [42.2821922222, -83.7000411111], [42.2821922222, -83.7000411111], [42.2821922222, -83.7000411111], [42.2821922222, -83.7000411111], [42.2821922222, -83.7000411111], [42.2821922222, -83.7000411111], [42.2829597222, -83.7005038889], [42.2829597222, -83.7005038889], [42.2829597222, -83.7005038889], [42.2829597222, -83.7005038889], [42.2829597222, -83.7005038889], [42.2838672222, -83.7011169444], [42.2838672222, -83.7011169444], [42.2838672222, -83.7011169444], [42.2838672222, -83.7011169444], [42.2845911111, -83.7016091667], [42.2845911111, -83.7016091667], [42.2845911111, -83.7016091667], [42.2845911111, -83.7016091667], [42.28548, -83.7022116667], [42.28548, -83.7022116667], [42.28548, -83.7022116667], [42.28548, -83.7022116667], [42.2862297222, -83.7027197222], [42.2862297222, -83.7027197222], [42.2862297222, -83.7027197222], [42.2862297222, -83.7027197222], [42.2862297222, -83.7027197222], [42.2862297222, -83.7027197222], [42.2862297222, -83.7027197222], [42.2869772222, -83.7031025], [42.2869772222, -83.7031025], [42.2869772222, -83.7031025], [42.2869772222, -83.7031025], [42.2869772222, -83.7031025], [42.2877736111, -83.7033411111], [42.2877736111, -83.7033411111], [42.2877736111, -83.7033411111], [42.2877736111, -83.7033411111], [42.2885552778, -83.70357], [42.2885552778, -83.70357], [42.2885552778, -83.70357], [42.2885552778, -83.70357], [42.2895066667, -83.7038441667], [42.2895066667, -83.7038441667], [42.2895066667, -83.7038441667], [42.2895066667, -83.7038441667], [42.2895066667, -83.7038441667], [42.2902852778, -83.7041030556], [42.2902852778, -83.7041030556], [42.2902852778, -83.7041030556], [42.2910025, -83.7044836111], [42.2910025, -83.7044836111], [42.2910025, -83.7044836111], [42.2916858333, -83.7049836111], [42.2916858333, -83.7049836111], [42.2916858333, -83.7049836111], [42.2916858333, -83.7049836111], [42.2923916667, -83.7053377778], [42.2923916667, -83.7053377778], [42.2923916667, -83.7053377778], [42.2923916667, -83.7053377778], [42.2923916667, -83.7053377778], [42.2923916667, -83.7053377778], [42.2931136111, -83.7052613889], [42.2931136111, -83.7052613889], [42.2931136111, -83.7052613889], [42.2931136111, -83.7052613889], [42.2937136111, -83.7049280556], [42.2937136111, -83.7049280556], [42.2937136111, -83.7049280556], [42.2937136111, -83.7049280556], [42.2937136111, -83.7049280556], [42.2937136111, -83.7049280556], [42.2937136111, -83.7049280556], [42.2943641667, -83.704695], [42.2943641667, -83.704695], [42.2943641667, -83.704695], [42.2943641667, -83.704695], [42.2943641667, -83.704695], [42.2943641667, -83.704695], [42.2948241667, -83.7045802778], [42.2948241667, -83.7045802778], [42.2948241667, -83.7045802778], [42.2948241667, -83.7045802778], [42.2948241667, -83.7045802778], [42.2948241667, -83.7045802778], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2949858333, -83.7045213889], [42.2950961111, -83.7045172222], [42.2950961111, -83.7045172222], [42.2950961111, -83.7045172222], [42.2950961111, -83.7045172222], [42.2950961111, -83.7045172222], [42.2950961111, -83.7045172222], [42.2950961111, -83.7045172222], [42.2950961111, -83.7045172222], [42.2950961111, -83.7045172222]],
+                {"bubblingMouseEvents": true, "color": "#cccccc", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#cccccc", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.5, "smoothFactor": 1.0, "stroke": true, "weight": 5}
+            ).addTo(map_8ccd4b786d69b99b9f915e8e5ba1acfb);
+        
+    
+        var popup_3871bb78445c85b99141a45831529197 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_25d8d7a2f53daf849dd83e4571190746 = $(`<div id="html_25d8d7a2f53daf849dd83e4571190746" style="width: 100.0%; height: 100.0%;">Trajeto completo - Combustão</div>`)[0];
+                popup_3871bb78445c85b99141a45831529197.setContent(html_25d8d7a2f53daf849dd83e4571190746);
+            
+        
+
+        poly_line_e2a7bb24618f879dd73d7e9b0c2abd29.bindPopup(popup_3871bb78445c85b99141a45831529197)
+        ;
+
+        
+    
+    
+            var circle_marker_a1e8e27108c160eb4bdffdfdf80f10c3 = L.circleMarker(
+                [42.2775583333, -83.6987497222],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(map_8ccd4b786d69b99b9f915e8e5ba1acfb);
+        
+    
+        var popup_feade97b667a8a290fdf8555aeb37229 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c35fca3ddcca8740273ccff4ff01d319 = $(`<div id="html_c35fca3ddcca8740273ccff4ff01d319" style="width: 100.0%; height: 100.0%;"><b>INÍCIO</b><br>Combustão</div>`)[0];
+                popup_feade97b667a8a290fdf8555aeb37229.setContent(html_c35fca3ddcca8740273ccff4ff01d319);
+            
+        
+
+        circle_marker_a1e8e27108c160eb4bdffdfdf80f10c3.bindPopup(popup_feade97b667a8a290fdf8555aeb37229)
+        ;
+
+        
+    
+    
+            var circle_marker_f860bcb37a5d9501c67bcd10792b86f9 = L.circleMarker(
+                [42.2950961111, -83.7045172222],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(map_8ccd4b786d69b99b9f915e8e5ba1acfb);
+        
+    
+        var popup_aec432c747d93d77a73b42fa8593b92a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_984a4afcb667a4b92fddad3c9bb042f0 = $(`<div id="html_984a4afcb667a4b92fddad3c9bb042f0" style="width: 100.0%; height: 100.0%;"><b>FIM</b><br>Combustão</div>`)[0];
+                popup_aec432c747d93d77a73b42fa8593b92a.setContent(html_984a4afcb667a4b92fddad3c9bb042f0);
+            
+        
+
+        circle_marker_f860bcb37a5d9501c67bcd10792b86f9.bindPopup(popup_aec432c747d93d77a73b42fa8593b92a)
+        ;
+
+        
+    
+</script>
+</html>

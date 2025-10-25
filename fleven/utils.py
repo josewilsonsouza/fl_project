@@ -33,97 +33,181 @@ def create_sliding_windows(data, sequence_length, prediction_length):
     return np.array(xs), np.array(ys)
 
 def load_data(client_id: int, sequence_length: int, prediction_length: int, 
-              batch_size: int, train_test_split: float, data_base_path: str = None,
-              target_column: str = "P_kW"):
+              batch_size: int, train_test_split: float = None, data_base_path: str = None,
+              target_column: str = "Energy_Consumption"):
     """
-    Carrega os dados para um cliente específico, processa e retorna DataLoaders.
+    Carrega os dados para um cliente específico do dataset eVED.
     
     Args:
-        client_id: ID do cliente
+        client_id: ID do cliente (índice da pasta client_N)
         sequence_length: Tamanho da janela de entrada
         prediction_length: Número de passos à frente para prever
         batch_size: Tamanho do batch
-        train_test_split: Proporção de dados para treino (ex: 0.8 = 80%)
-        data_base_path: Caminho base para os dados (opcional),
-        target_column: O nome da coluna a ser usada como alvo da previsão
+        train_test_split: IGNORADO - usa as pastas train/test do dataset
+        data_base_path: Caminho base para EVED_Clients (ex: "EVED_Clients")
+        target_column: Coluna alvo (padrão: "Energy_Consumption")
+    
+    Returns:
+        trainloader, testloader, num_features
     """
-    # 🔧 Define o diretório de dados de forma robusta
+    
+    # Define o diretório base
     if data_base_path:
-        # Usa o caminho configurado
-        data_dir = Path(data_base_path) / f"client_{client_id}"
-        print(f"[Cliente {client_id}] Usando data_base_path configurado: {data_dir}")
+        base_dir = Path(data_base_path)
     else:
-        # Usa caminho relativo ao arquivo atual
-        base_dir = Path(__file__).parent.parent
-        data_dir = base_dir / "data" / f"client_{client_id}"
-        print(f"[Cliente {client_id}] Usando caminho relativo: {data_dir}")
+        base_dir = Path(__file__).parent.parent / "data" / "EVED_Clients"
     
-    print(f"[Cliente {client_id}] Procurando dados em: {data_dir.absolute()}")
+    train_dir = base_dir / "train" / f"client_{client_id}"
+    test_dir = base_dir / "test" / f"client_{client_id}"
     
-    # Verifica se o diretório existe
-    if not data_dir.exists():
+    print(f"\n{'='*60}")
+    print(f"[Cliente {client_id}] Carregando dados do eVED")
+    print(f"{'='*60}")
+    print(f"Train: {train_dir.absolute()}")
+    print(f"Test:  {test_dir.absolute()}")
+    
+    # Verifica se os diretórios existem
+    if not train_dir.exists():
         raise FileNotFoundError(
-            f"Diretório não encontrado para o cliente {client_id}: {data_dir.absolute()}"
+            f"Diretório de treino não encontrado: {train_dir.absolute()}"
+        )
+    if not test_dir.exists():
+        raise FileNotFoundError(
+            f"Diretório de teste não encontrado: {test_dir.absolute()}"
         )
     
-    # Carrega todos os arquivos CSV do diretório
-    csv_files = list(data_dir.glob("*.csv"))
+    # Carrega todos os arquivos parquet (trips)
+    train_files = list(train_dir.glob("trip_*.parquet"))
+    test_files = list(test_dir.glob("trip_*.parquet"))
     
-    if not csv_files:
+    # Ignora metadata.json se existir
+    train_files = [f for f in train_files if 'metadata' not in f.name.lower()]
+    test_files = [f for f in test_files if 'metadata' not in f.name.lower()]
+    
+    if not train_files:
         raise FileNotFoundError(
-            f"Nenhum arquivo CSV encontrado para o cliente {client_id} no diretório {data_dir.absolute()}"
+            f"Nenhum arquivo de trip encontrado em {train_dir.absolute()}"
+        )
+    if not test_files:
+        raise FileNotFoundError(
+            f"Nenhum arquivo de trip encontrado em {test_dir.absolute()}"
         )
     
-    print(f"[Cliente {client_id}] Encontrados {len(csv_files)} arquivos CSV")
-    all_routes_df = [pd.read_csv(f) for f in csv_files]
-    combined_df = pd.concat(all_routes_df, ignore_index=True)
-
-    all_columns = ['vehicle_speed', 'engine_rpm', 'P_kW']
+    print(f"📦 Trips de treino: {len(train_files)}")
+    print(f"📦 Trips de teste:  {len(test_files)}")
     
-    # se a coluna alvo existe
-    if target_column not in all_columns:
+    # Carrega e concatena os dados
+    train_dfs = [pd.read_parquet(f) for f in train_files]
+    test_dfs = [pd.read_parquet(f) for f in test_files]
+    
+    train_df = pd.concat(train_dfs, ignore_index=True)
+    test_df = pd.concat(test_dfs, ignore_index=True)
+    
+    print(f"📊 Pontos de treino: {len(train_df):,}")
+    print(f"📊 Pontos de teste:  {len(test_df):,}")
+    
+    # ========================================
+    # FEATURES GLOBAIS (válidas para todos os tipos de veículos)
+    # ========================================
+    feature_columns = [
+        'Vehicle Speed[km/h]'          # Velocidade
+#        'Gradient',                      # Inclinação da estrada
+#        'OAT[DegC]',                    # Temperatura externa
+#        'Air Conditioning Power[Watts]', # Ar condicionado
+#        'Heater Power[Watts]',          # Aquecedor
+        # Você pode adicionar mais se necessário:
+        # 'Elevation Smoothed[m]',      # Elevação (pode ser útil)
+    ]
+    
+    # Verifica se a coluna alvo existe
+    if target_column not in train_df.columns:
         raise ValueError(
-            f"A coluna alvo '{target_column}' não é uma das colunas válidas: {all_columns}"
+            f"Coluna alvo '{target_column}' não encontrada. "
+            f"Colunas disponíveis: {train_df.columns.tolist()}"
         )
     
-    # Reordena as colunas para garantir que a coluna alvo seja a ÚLTIMA
-    feature_columns = [col for col in all_columns if col != target_column] + [target_column]
-    processed_df = combined_df[feature_columns].dropna()
-
-    split_index = int(len(processed_df) * train_test_split)
-    train_df = processed_df.iloc[:split_index]
-    test_df = processed_df.iloc[split_index:]
-
+    # Verifica quais features estão disponíveis
+    available_features = [col for col in feature_columns if col in train_df.columns]
+    missing_features = [col for col in feature_columns if col not in train_df.columns]
+    
+    if missing_features:
+        print(f"⚠️  Features não encontradas (serão ignoradas): {missing_features}")
+    
+    if not available_features:
+        raise ValueError("Nenhuma feature válida encontrada no dataset!")
+    
+    print(f"\n✅ Features selecionadas ({len(available_features)}):")
+    for feat in available_features:
+        print(f"   - {feat}")
+    
+    # Ordena: features + target (target deve ser a ÚLTIMA coluna)
+    all_columns = available_features + [target_column]
+    
+    # Seleciona e limpa os dados
+    train_processed = train_df[all_columns].copy()
+    test_processed = test_df[all_columns].copy()
+    
+    # Remove linhas com valores nulos ou infinitos
+    print(f"\n🧹 Limpeza de dados...")
+    print(f"   Treino antes: {len(train_processed):,} linhas")
+    train_processed = train_processed.replace([np.inf, -np.inf], np.nan).dropna()
+    print(f"   Treino depois: {len(train_processed):,} linhas")
+    
+    print(f"   Teste antes: {len(test_processed):,} linhas")
+    test_processed = test_processed.replace([np.inf, -np.inf], np.nan).dropna()
+    print(f"   Teste depois: {len(test_processed):,} linhas")
+    
+    if len(train_processed) == 0 or len(test_processed) == 0:
+        raise ValueError("Dados vazios após limpeza!")
+    
+    # Normalização (MinMaxScaler)
+    print(f"\n📏 Normalizando dados...")
     scaler = MinMaxScaler()
-    scaler.fit(train_df)
-
-    train_scaled = scaler.transform(train_df)
-    test_scaled = scaler.transform(test_df)
-
+    scaler.fit(train_processed)
+    
+    train_scaled = scaler.transform(train_processed)
+    test_scaled = scaler.transform(test_processed)
+    
+    # Criar janelas deslizantes
+    print(f"\n🪟 Criando janelas deslizantes...")
+    print(f"   Sequence length: {sequence_length}")
+    print(f"   Prediction length: {prediction_length}")
+    
     X_train, y_train = create_sliding_windows(train_scaled, sequence_length, prediction_length)
     X_test, y_test = create_sliding_windows(test_scaled, sequence_length, prediction_length)
     
+    print(f"   Janelas de treino: {len(X_train):,}")
+    print(f"   Janelas de teste:  {len(X_test):,}")
+    
     if len(X_train) == 0 or len(X_test) == 0:
         raise ValueError(
-            f"A divisão de dados para o cliente {client_id} resultou em um conjunto vazio."
+            f"Nenhuma janela criada! Verifique se há dados suficientes. "
+            f"Precisa de pelo menos {sequence_length + prediction_length} pontos consecutivos."
         )
-
+    
+    # Converter para tensores PyTorch
     X_train_tensor = torch.from_numpy(X_train).float()
     y_train_tensor = torch.from_numpy(y_train).float()
     X_test_tensor = torch.from_numpy(X_test).float()
     y_test_tensor = torch.from_numpy(y_test).float()
-
+    
+    # Criar DataLoaders
     train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
     test_dataset = TensorDataset(X_test_tensor, y_test_tensor)
     
     trainloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    testloader = DataLoader(test_dataset, batch_size=batch_size)
+    testloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
     
     num_features = X_train_tensor.shape[2]
     
-    print(f"[Cliente {client_id}] Dados carregados: {len(train_dataset)} treino, {len(test_dataset)} teste")
-
+    print(f"\n✅ Dados carregados com sucesso!")
+    print(f"   Features: {num_features}")
+    print(f"   Batches de treino: {len(trainloader)}")
+    print(f"   Batches de teste:  {len(testloader)}")
+    print(f"{'='*60}\n")
+    
     return trainloader, testloader, num_features
+
 
 def train(net, trainloader, epochs: int, learning_rate: float, 
           max_grad_norm: float, device):
@@ -136,7 +220,10 @@ def train(net, trainloader, epochs: int, learning_rate: float,
     total_loss_sum = 0.0
     total_samples = 0
 
-    for _ in range(epochs):
+    for epoch in range(epochs):
+        epoch_loss = 0.0
+        epoch_samples = 0
+        
         for sequences, labels in trainloader:
             sequences, labels = sequences.to(device), labels.to(device)
             optimizer.zero_grad()
@@ -147,8 +234,15 @@ def train(net, trainloader, epochs: int, learning_rate: float,
             optimizer.step()
 
             batch_size = sequences.size(0)
+            epoch_loss += loss.item() * batch_size
+            epoch_samples += batch_size
             total_loss_sum += loss.item() * batch_size
             total_samples += batch_size
+        
+        # Log do progresso (opcional, pode comentar se quiser menos output)
+        if (epoch + 1) % 5 == 0 or epoch == 0:
+            avg_epoch_loss = epoch_loss / epoch_samples if epoch_samples > 0 else 0
+            logger.info(f"  Época {epoch+1}/{epochs} - Loss: {avg_epoch_loss:.6f}")
 
     if total_samples == 0:
         return 0.0
@@ -176,6 +270,7 @@ def test(net, testloader, device):
     avg_loss = total_loss_sum / total_samples
     return avg_loss, total_samples
 
+
 def get_model(model_config: dict):
     """
     Fábrica de modelos que retorna uma instância de modelo com base na configuração.
@@ -183,36 +278,34 @@ def get_model(model_config: dict):
     model_type = model_config.get("name", "lstm").lower()
     
     if model_type == "lstm":
-        print(f"Criando modelo LSTMNet (Simples: LSTM -> Linear)...")
-        # Modelo original do projeto, agora com dropout
+        logger.info(f"Criando modelo LSTMNet (Simples: LSTM -> Linear)...")
         return LSTMNet(
             input_size=model_config["input_size"],
-            hidden_size=model_config["hidden_size"], # Usa 'hidden_size'
+            hidden_size=model_config["hidden_size"],
             output_size=model_config["output_size"],
             num_layers=model_config.get("num_layers", 1),
             dropout=model_config.get("dropout", 0.0)
         )
     
     elif model_type == "lstm_dense":
-        print(f"Criando modelo LSTMDenseNet (Adaptado: LSTM -> Dense -> Linear)...")
-        # modelo adaptado de um dos notebook do DACAI
+        logger.info(f"Criando modelo LSTMDenseNet (Adaptado: LSTM -> Dense -> Linear)...")
         return LSTMDenseNet(
             input_size=model_config["input_size"],
-            lstm_hidden_size=model_config["lstm_hidden_size"],   # <-- Novo parâmetro pro pyproject tbm
-            dense_hidden_size=model_config["dense_hidden_size"], # <-- Novo parâmetro pro pyproject tbm
+            lstm_hidden_size=model_config["lstm_hidden_size"],
+            dense_hidden_size=model_config["dense_hidden_size"],
             output_size=model_config["output_size"],
             num_layers=model_config.get("num_layers", 1),
             dropout=model_config.get("dropout", 0.0)
         )
 
     elif model_type == "mlp":
-        print(f"Criando modelo MLPNet...")
-        # Para o MLP, o tamanho da entrada é a sequência inteira achatada
+        logger.info(f"Criando modelo MLPNet...")
         mlp_input_size = model_config["sequence_length"] * model_config["input_size"]
         return MLPNet(
             input_size=mlp_input_size,
-            hidden_size=model_config["hidden_size"], # Usa 'hidden_size'
+            hidden_size=model_config["hidden_size"],
             output_size=model_config["output_size"]
         )
+    
     else:
         raise ValueError(f"Tipo de modelo desconhecido: {model_type}")

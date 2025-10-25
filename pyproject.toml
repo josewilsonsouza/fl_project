@@ -17,6 +17,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Software Development :: Libraries :: Python Modules"
 ]
+
 authors = [
     {name = "João C. Braz", email = "calbraz@gmail.com"},
     {name = "José Wilson C. Souza", email = "josewilson@matematica.ufrj.br"},
@@ -38,7 +39,8 @@ dependencies = [
     "matplotlib>=3.7.0",
     "seaborn>=0.12.0",
     "toml",
-    "mlflow>=2.9.0"
+    "mlflow>=2.9.0",
+    "pyarrow>=12.0.0"  # NOVO: necessário para ler arquivos .parquet
 ]
 
 [project.urls]
@@ -62,45 +64,56 @@ rounds = 10
 min-nodes = 3
 seed = 64
 
-# 🔧 Caminhos (ajustar conforme necessário). (deixar só "" parece que funciona)
-data-base-path = "" #"C:/Users/abece/Documents/fleven-test/data"
-metrics-base-path = "" #"C:/Users/abece/Documents/fleven-test/metrics"
-results-base-path = "" #"C:/Users/abece/Documents/fleven-test/results"
+# 🔧 Caminhos (ajustar conforme necessário)
+# Para eVED, deixe vazio "" para usar caminhos relativos ou especifique o caminho absoluto
+data-base-path = ""  # Deixe vazio para usar "data/EVED_Clients" ou especifique caminho completo
+metrics-base-path = "" # caminho das metricas
+results-base-path = "" # caminho dos results
 
 # Configurações MLflow
-mlflow-tracking-uri = "https://jwsouza13-fleven.hf.space"  # URI do servidor MLflow
-mlflow-experiment-name = "FLEVEn-Experiments"
-mlflow-enable = true  # Habilitar/desabilitar MLflow
+mlflow-tracking-uri = "https://jwsouza13-fleven.hf.space"
+mlflow-experiment-name = "FLEVEn-eVED-Experiments"  # teste no eVED
+mlflow-enable = true
 
+# ========================================
+# 🚗 CONFIGURAÇÕES PARA O DATASET eVED
+# ========================================
 
 # Escolha dos modelos do FLEVEn: "lstm", "lstm_dense", "mlp"
 model-type = "lstm"
 
 # Parâmetros para "lstm" e "mlp"
-hidden-size = 32
+hidden-size = 64  # 32 -> 64 (mais capacidade para padrões complexos)
 
-# Parâmetros para "lstm_dense" (o novo modelo adaptado)
-lstm-hidden-size = 32  # Tamanho da camada LSTM
-dense-hidden-size = 16 # Tamanho da camada Densa intermediária
+# Parâmetros para "lstm_dense" (modelo adaptado)
+lstm-hidden-size = 64   # 32 -> 64
+dense-hidden-size = 32  # 16 -> 32
 
 # Parâmetros para "lstm" e "lstm_dense"
-input-size = 3
-num-layers = 1
-dropout = 0.2  # Taxa de dropout (0.0 para desativar)
+input-size = 2  # ALTERADO: 3 -> 5 (número de features globais do eVED)
+                # Features: Vehicle Speed, Energy_Consumption
+num-layers = 2  #(mais camadas LSTM para capturar padrões temporais)
+dropout = 0.2
 
-# Configurações de Séries Temporais
-sequence-length = 100
-prediction-length = 50
-target-column = "P_kW"
+# ========================================
+# 📊 CONFIGURAÇÕES DE SÉRIES TEMPORAIS
+# ========================================
+sequence-length = 50     # 100 -> 50 (janela de entrada menor, mais adequada para trips curtas)
+prediction-length = 10   # 50 -> 10 (prever 10 pontos à frente)
+target-column = "Energy_Consumption"
 
-# Configurações de Treinamento
-batch-size = 32
-learning-rate = 1e-5
-local-epochs = 1
+# ========================================
+# 🎓 CONFIGURAÇÕES DE TREINAMENTO
+# ========================================
+batch-size = 64          # 32 -> 64 (convergência mais rápida)
+learning-rate = 1e-4     # 1e-5 -> 1e-4 (aprendizado mais rápido)
+local-epochs = 3         # 1 -> 3 (mais épocas locais por round)
 max-grad-norm = 1.0
 
-# Configurações de Dados
-train-test-split = 0.7
+# ========================================
+# 📁 CONFIGURAÇÕES DE DADOS
+# ========================================
+train-test-split = 0.7  # Não usado pelo eVED (usa pastas train/test separadas)
 
 # Configurações de Checkpoint
 save-checkpoint-every = 5
@@ -129,8 +142,7 @@ options.num-supernodes = 3
 options.backend.client-resources.num-cpus = 2
 options.backend.client-resources.num-gpus = 0.0
 
-# essas configs vão ser importantes mais na frente, quando quisermos, 
-# por exemplo, outros parametros para certos clients
+# Configurações de nó (para uso futuro com configurações específicas por cliente)
 #[[tool.flwr.federations.local-simulation.options.supernode.resources]]
 #node-config.partition-id = 1
 #node-config.num-partitions = 3

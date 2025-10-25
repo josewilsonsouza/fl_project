@@ -10,5 +10,7 @@
 * Criar cenário com fluxo de dados
 
 # Progress
-- Já tenho todos os dados do VED e eVED. Agora precisamos entender melhor como ele está
-- Proximo passo é criar mais clientes. Cada VehId será um cliente
+- fiz um código que gera as rotas para um dado client e trip
+- tenho um código que pega os dados que serão usados para treino e teste do hf
+  e então salva em disco para que possa ser usado pelo Fleven
+- alterei o `utils.py` e o `pyproject.toml` para acompanhar a simulção no eVED

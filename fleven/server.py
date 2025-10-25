@@ -19,7 +19,7 @@ import sys
 
 # Configuração do logging
 logging.basicConfig(
-    level=logging.INFO,        # Nível mínimo para exibir (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    #level=logging.INFO,        # Nível mínimo para exibir (DEBUG, INFO, WARNING, ERROR, CRITICAL)
     stream=sys.stdout,         # Garante que vá para o console (bom para Docker/HF Spaces)
     # filename='fleven_app.log', 
     # filemode='a' # 'a' para append, 'w' para sobrescrever
