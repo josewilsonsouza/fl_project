@@ -1,5 +1,5 @@
 # FLEVEn
-## Deploy em trêes Raspbarry Pi
+## Deploy em três Raspbarry Pi
 Vamos simular o deploy do Fleven em 3 Raspbarry Pi conecatado em uma rede Taiscale e um PC como servidor (na mesma rede).
 
 1. Em cada Pi clonamos o repositório:
@@ -153,14 +153,14 @@ O pyproject.toml presente nos Raspberry Pis não é lido durante a execução do
 | **9091** | ServerAppIo | gRPC | Interno | SuperLink ↔ ServerApp |
 | **9094-9096** | ClientAppIo | gRPC | Local | SuperNode ↔ ClientApp |
 
-
-### 1. **Execução de `flwr run`**
+Veja o fluxo de execução com Flower
+1. **Execução de `flwr run`**. A porta 9093 recebe comandos administrativos. É a API de controle do SuperLink.
 ```
 [Seu PC] --→ [9093 Control API] no SuperLink
          "Inicie um novo run com este FAB"
 ```
 
-### 2. **SuperLink recebe o FAB**
+2. **SuperLink recebe o FAB**
 ```
 [SuperLink] ← FAB recebido
             ↓
@@ -169,7 +169,8 @@ O pyproject.toml presente nos Raspberry Pis não é lido durante a execução do
       [Aguarda SuperNodes]
 ```
 
-### 3. **SuperNodes conectam**
+3. **SuperNodes conectam**. A porta 9092 coordena comunicação entre servidor e clientes. É a API para gerenciar a "frota" de SuperNodes
+
 ```
 [Rasp1] --→ [9092 Fleet API] "Estou disponível!"
 [Rasp2] --→ [9092 Fleet API] "Estou disponível!"
@@ -188,7 +189,7 @@ O pyproject.toml presente nos Raspberry Pis não é lido durante a execução do
 [Rasp1] 
   SuperNode (porta 9092 ↔ SuperLink)
       ↓↑
-  ClientApp (porta 9094 local) ← Executa seu código
+  ClientApp (porta 9094 local) ← Executa o código
       ↓
   Resultado enviado de volta via 9092
 ```
