@@ -106,7 +106,7 @@ O `SuperNode` inicia o `ClientApp` (o `client.py`). O código dentro do `ClientA
 O pyproject.toml presente nos Raspberry Pis não é lido durante a execução do `ClientApp` neste modo; ele serve apenas para o `pip install -e .` saber quais dependências instalar.
 
 ### Portas
-
+```
 ┌─────────────────────────────────────────────────────┐
 │                    SERVIDOR                         │
 │                                                     │
@@ -143,7 +143,7 @@ O pyproject.toml presente nos Raspberry Pis não é lido durante a execução do
     │  (PC/User)  │           │  (Raspberry Pi)  │
     │             │           │                  │
     └─────────────┘           └──────────────────┘
-
+```
 ## Tabela de Portas
 
 | Porta | Componente | Protocolo | Conecta de | Propósito |
