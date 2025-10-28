@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "fleven"
 version = "1.0.0"
-description = "FLEVEn — Federated Learning for Vehicular Environment"
+description = "FLEVEn - Federated Learning for Vehicular Environment"
 license = {text = "Apache-2.0"}
 dependencies = [
     "flwr[simulation]>=1.22.0,<2.0",
@@ -36,16 +36,21 @@ rounds = 10
 min-nodes = 3
 seed = 42
 
-# 🔧 Caminhos (ajustar conforme necessário). (deixar só "" parece que funciona)
-data-base-path = "" #"C:/Users/abece/Documents/fleven-test/data"
-metrics-base-path = "" #"C:/Users/abece/Documents/fleven-test/metrics"
-results-base-path = "" #"C:/Users/abece/Documents/fleven-test/results"
+# Caminhos (SÓ NO SERVIDOR) (ajustar conforme necessário), apenas no SERVIDOR (no cliente não vai ter nenhum efeito).
+# Se estiver simulando localmente, ou seja no modulo local-simulation (onde usa flwr run .) não precisa alterar nada
+# mas se estiver em modo Deploy (fleven-deployment) precisa especificar os caminhos:
+data-base-path = "" # ex.: "/home/lainf/fleven/data". Esse caminho se refere ao local onde está os dados nos clientes
+# no exemplo dado, estamos supondo que cada cliente tem o usuário lainf e que o fleven foi clonado nesse local.
+# se os clientes tem formas (nomes) diferentes (ou o diretório foi clonado noutro lugar), então o caminho dos dados deve ser especificado diretamente no
+# no arquivo utils.py, para cada cliente.
+metrics-base-path = "" # ex.: "C:/user-server/fleven/metrics". Aqui você diz onde salvar metricas
+results-base-path = "" #"ex.: C:/user-server/fleven/results". Onde salvar resultados. Também poderia ser: /home/lainf/fleven/results
+# isso salvaria nos diretorios dos clientes.
 
 # Configurações MLflow
-mlflow-tracking-uri = "http://127.0.0.1:5000"  # URI do servidor MLflow
-mlflow-experiment-name = "FLEVEn-Experiments"
+mlflow-tracking-uri = "https://jwsouza13-fleven.hf.space"  # URI do servidor MLflow
+mlflow-experiment-name = "Fleven-Deploy"
 mlflow-enable = true  # Habilitar/desabilitar MLflow
-
 
 # Escolha dos modelos do FLEVEn: "lstm", "mlp"
 model-type = "lstm"
@@ -109,5 +114,5 @@ options.backend.client-resources.num-gpus = 0.0
 #node-config.num-partitions = 3
 
 [tool.flwr.federations.fleven-deployment]
-address = "127.0.0.1:9093"
+address = "<IP-SERVIDOR>:9093"
 insecure = true

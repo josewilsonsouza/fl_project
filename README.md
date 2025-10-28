@@ -5,7 +5,7 @@ Utiliza o framework [Flower](https://flower.ai) para orquestrar o treinamento co
 em múltiplos nós, sem centralizar os dados. O objetivo é prever variáveis veiculares (ex: potência, velocidade) 
 a partir de séries temporais coletadas de diferentes clientes, promovendo privacidade e escalabilidade. Essa aplicação também permite 
 visualização do desempenho dos clientes e permite testar diversas estratégias, tudo isso por contar com a integração com o [MLflow](https://mlflow.org/) 
-facilidado o FLOps (uma adaptação apropriada do MLOps).
+facilidado o FLOps (uma adaptação do MLOps).
 
 Resumo das pastas
 

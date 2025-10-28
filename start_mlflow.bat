@@ -1,3 +1,0 @@
-@echo off
-echo Iniciando servidor MLflow...
-mlflow ui --host 127.0.0.1 --port 5000
