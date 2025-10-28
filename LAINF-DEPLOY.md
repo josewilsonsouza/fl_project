@@ -16,6 +16,7 @@ cd fleven
 [tool.flwr.federations.fleven-deployment]
 address = "<IP-SERVIDOR>:9093"
 insecure = true
+```
 
 3. Como nosso diretório `fleven`, em todos os Pi, tem o mesmo caminho `/home/lainf/fleven`, no SERVIDOR
 altere o `pyproject.toml` para ficar assim
@@ -103,3 +104,101 @@ Quando o `ServerApp` (rodando no servidor) decide iniciar um round e seleciona o
 
 O `SuperNode` inicia o `ClientApp` (o `client.py`). O código dentro do `ClientApp` (por exemplo, a função `load_data` em `utils.py`) recebe a configuração que veio do FAB, não do `pyproject.toml` local do Pi.
 O pyproject.toml presente nos Raspberry Pis não é lido durante a execução do `ClientApp` neste modo; ele serve apenas para o `pip install -e .` saber quais dependências instalar.
+
+### Portas
+
+┌─────────────────────────────────────────────────────┐
+│                    SERVIDOR                         │
+│                                                     │
+│  ┌───────────────────────────────────────────┐     │
+│  │         flower-superlink                  │     │
+│  │                                           │     │
+│  │  ┌─────────────────────────────────────┐ │     │
+│  │  │ Control API                         │ │     │
+│  │  │ Porta: 9093                         │ │     │
+│  │  │ Recebe: flwr run/ls/stop           │ │     │
+│  │  └─────────────────────────────────────┘ │     │
+│  │                                           │     │
+│  │  ┌─────────────────────────────────────┐ │     │
+│  │  │ Fleet API (gRPC-rere)               │ │     │
+│  │  │ Porta: 9092                         │ │     │
+│  │  │ Recebe: SuperNodes (clients)        │ │     │
+│  │  └─────────────────────────────────────┘ │     │
+│  │                                           │     │
+│  │  ┌─────────────────────────────────────┐ │     │
+│  │  │ ServerAppIo API                     │ │     │
+│  │  │ Porta: 9091                         │ │     │
+│  │  │ Comunicação interna ServerApp       │ │     │
+│  │  └─────────────────────────────────────┘ │     │
+│  └───────────────────────────────────────────┘     │
+└─────────────────────────────────────────────────────┘
+           ▲                           ▲
+           │                           │
+    Porta 9093                   Porta 9092
+           │                           │
+           │                           │
+    ┌──────┴──────┐           ┌────────┴─────────┐
+    │             │           │                  │
+    │  flwr run   │           │  SuperNodes      │
+    │  (PC/User)  │           │  (Raspberry Pi)  │
+    │             │           │                  │
+    └─────────────┘           └──────────────────┘
+
+## Tabela de Portas
+
+| Porta | Componente | Protocolo | Conecta de | Propósito |
+|-------|-----------|-----------|------------|-----------|
+| **9093** | Control API | HTTP/REST | `flwr` CLI | Comandos admin (run/ls/stop) |
+| **9092** | Fleet API | gRPC-rere | SuperNodes | Coordenação clientes ↔ servidor |
+| **9091** | ServerAppIo | gRPC | Interno | SuperLink ↔ ServerApp |
+| **9094-9096** | ClientAppIo | gRPC | Local | SuperNode ↔ ClientApp |
+
+
+### 1. **Execução de `flwr run`**
+```
+[Seu PC] --→ [9093 Control API] no SuperLink
+         "Inicie um novo run com este FAB"
+```
+
+### 2. **SuperLink recebe o FAB**
+```
+[SuperLink] ← FAB recebido
+            ↓
+      [Armazena FAB internamente]
+            ↓
+      [Aguarda SuperNodes]
+```
+
+### 3. **SuperNodes conectam**
+```
+[Rasp1] --→ [9092 Fleet API] "Estou disponível!"
+[Rasp2] --→ [9092 Fleet API] "Estou disponível!"
+[Rasp3] --→ [9092 Fleet API] "Estou disponível!"
+```
+
+### 4. **SuperLink distribui tarefas**
+```
+[SuperLink via 9092] --→ [Rasp1] "Execute treino com estes params"
+[SuperLink via 9092] --→ [Rasp2] "Execute treino com estes params"
+[SuperLink via 9092] --→ [Rasp3] "Execute treino com estes params"
+```
+
+### 5. **SuperNodes executam ClientApp**
+```
+[Rasp1] 
+  SuperNode (porta 9092 ↔ SuperLink)
+      ↓↑
+  ClientApp (porta 9094 local) ← Executa seu código
+      ↓
+  Resultado enviado de volta via 9092
+```
+
+### 6. **Resultados voltam**
+```
+[Rasp1] --→ [9092 Fleet API] "Treino concluído, aqui o modelo"
+[Rasp2] --→ [9092 Fleet API] "Treino concluído, aqui o modelo"
+[Rasp3] --→ [9092 Fleet API] "Treino concluído, aqui o modelo"
+            ↓
+      [SuperLink agrega]
+            ↓
+      [Próxima rodada...]

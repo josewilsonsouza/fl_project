@@ -5,7 +5,7 @@ Utiliza o framework [Flower](https://flower.ai) para orquestrar o treinamento co
 em múltiplos nós, sem centralizar os dados. O objetivo é prever variáveis veiculares (ex: potência, velocidade) 
 a partir de séries temporais coletadas de diferentes clientes, promovendo privacidade e escalabilidade. Essa aplicação também permite 
 visualização do desempenho dos clientes e permite testar diversas estratégias, tudo isso por contar com a integração com o [MLflow](https://mlflow.org/) 
-facilidado o FLOps (uma adaptação do MLOps).
+facilidado o FLOps (uma adaptação apropriada do MLOps).
 
 Resumo das pastas
 
@@ -42,16 +42,6 @@ Com seu ambiente virtual `venv` ativado, instale as dependencias do projeto nele
 pip install -e .
 ```
 
-Em outro terminal, inicie o servidor *MLflow*
-```bash
-./start_mlflow
-```
-ou
-
-```bash
-mlflow ui
-```
-
 Agora está quase pronto para iniciar o FLEVEn. Existem dois métodos de reproduzi-lo, seguindo o padrão de apps do [Flower](https://flower.ai).
 
 ### Método 1: Simulação Local (Recomendado para Testes)
@@ -64,12 +54,12 @@ flwr run . local-simulation
 ```
 ### Método 2: Deployment com SuperLink/SuperNodes
 
-Se escolher esse método, primeiro ajuste os caminhos especificados no `pyproject.toml` para conicidir com seu pc:
+Se escolher esse método, primeiro ajuste os caminhos especificados no `pyproject.toml` para conicidir com o _path_ para os dados nos *Clientes* e algum outro local onde você deseja salvar `metrics` e `results`.
 
 ```bash
-data-base-path = "C:/user/fleven/data"
-metrics-base-path = "C:/user/fleven/metrics"
-results-base-path = "C:/user/fleven/results"
+data-base-path = "C:/client/fleven/data" # ou "/home/client/fleven/data" no Linux/Raspbarry Pi
+metrics-base-path = "C:/server/fleven/metrics" # porém poderiamos escolher salvar nos clientes também
+results-base-path = "C:/server/fleven/results"
 ```
 Agora rode
 
@@ -108,12 +98,12 @@ A forma mais interessante e que será usada para você ver a evolução do model
 Acesse
 
 ```bash
-http://127.0.0.1:500
+https://jwsouza13-fleven.hf.space/
 ```
+
 Veja a documentação oficial do [MLflow](https://mlflow.org/) para mais detalhes da interface.
 
 ![Print da UI do MLflow para o FLEVEn](/images/mlflow_print.png)
-
 
 ## 🔧 Alterando Configurações
 
@@ -202,7 +192,7 @@ root-certificates = "certificates/ca.crt"
 1. Gere certificados TLS (veja documentação Flower)
 2. Atualize `pyproject.toml`:
 ```toml
-[tool.flwr.federations.raspberry-deployment]
+[tool.flwr.federations.fleven-deployment]
 address = "<IP-SERVIDOR>:9093"
 root-certificates = "./certificates/ca.crt"
 insecure = false
