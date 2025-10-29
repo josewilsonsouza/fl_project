@@ -39,12 +39,12 @@ seed = 42
 # Caminhos (SÓ NO SERVIDOR) (ajustar conforme necessário), apenas no SERVIDOR (no cliente não vai ter nenhum efeito).
 # Se estiver simulando localmente, ou seja no modulo local-simulation (onde usa flwr run .) não precisa alterar nada
 # mas se estiver em modo Deploy (fleven-deployment) precisa especificar os caminhos:
-data-base-path = "/home/lainf/fleven/data" # ex.: "/home/lainf/fleven/data". Esse caminho se refere ao local onde está os dados nos clientes
+data-base-path = "" # ex.: "/home/lainf/fleven/data". Esse caminho se refere ao local onde está os dados nos clientes
 # no exemplo dado, estamos supondo que cada cliente tem o usuário lainf e que o fleven foi clonado nesse local.
 # se os clientes tem formas (nomes) diferentes (ou o diretório foi clonado noutro lugar), então o caminho dos dados deve ser especificado diretamente no
 # no arquivo utils.py, para cada cliente.
-metrics-base-path = "C:/Users/isael/Documents/fleven/metrics" # ex.: "C:/user-server/fleven/metrics". Aqui você diz onde salvar metricas
-results-base-path = "C:/Users/isael/Documents/fleven/results" #"ex.: C:/user-server/fleven/results". Onde salvar resultados. Também poderia ser: /home/lainf/fleven/results
+metrics-base-path = "" # ex.: "C:/user-server/fleven/metrics". Aqui você diz onde salvar metricas
+results-base-path = "" #"ex.: C:/user-server/fleven/results". Onde salvar resultados. Também poderia ser: /home/lainf/fleven/results
 # isso salvaria nos diretorios dos clientes.
 
 # Configurações MLflow
@@ -114,5 +114,5 @@ options.backend.client-resources.num-gpus = 0.0
 #node-config.num-partitions = 3
 
 [tool.flwr.federations.fleven-deployment]
-address = "100.125.97.103:9093"
+address = "<IP-SERVERIDOR>:9093"
 insecure = true
