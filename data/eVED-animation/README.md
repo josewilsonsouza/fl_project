@@ -72,13 +72,6 @@ pip install --upgrade streamlit
 2. Verifique se há arquivos `.parquet` nos diretórios dos clientes
 3. Tente outro cliente/trip
 
-## 📱 Responsividade
-
-A aplicação é responsiva e funciona em:
-- 💻 Desktop (recomendado)
-- 📱 Tablet (funcional)
-- 📱 Mobile (limitado, melhor usar landscape)
-
 ## 🆘 Suporte
 
 - 💻 Código: [app_streamlit.py](app_streamlit.py)
