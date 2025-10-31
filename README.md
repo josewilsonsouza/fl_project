@@ -54,12 +54,12 @@ flwr run . local-simulation
 ```
 ### Método 2: Deployment com SuperLink/SuperNodes
 
-Se escolher esse método, primeiro ajuste os caminhos especificados no `pyproject.toml` para conicidir com seu pc:
+Se escolher esse método, primeiro ajuste os caminhos especificados no `pyproject.toml` para conicidir com o _path_ para os dados nos *Clientes* e algum outro local onde você deseja salvar `metrics` e `results`.
 
 ```bash
-data-base-path = "C:/user/fleven/data"
-metrics-base-path = "C:/user/fleven/metrics"
-results-base-path = "C:/user/fleven/results"
+data-base-path = "C:/client/fleven/data" # ou "/home/client/fleven/data" no Linux/Raspbarry Pi
+metrics-base-path = "C:/server/fleven/metrics" # porém poderiamos escolher salvar nos clientes também
+results-base-path = "C:/server/fleven/results"
 ```
 Agora rode
 
@@ -192,7 +192,7 @@ root-certificates = "certificates/ca.crt"
 1. Gere certificados TLS (veja documentação Flower)
 2. Atualize `pyproject.toml`:
 ```toml
-[tool.flwr.federations.raspberry-deployment]
+[tool.flwr.federations.fleven-deployment]
 address = "<IP-SERVIDOR>:9093"
 root-certificates = "./certificates/ca.crt"
 insecure = false

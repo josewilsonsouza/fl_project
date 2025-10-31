@@ -305,7 +305,7 @@ def get_model(model_config: dict):
             input_size=mlp_input_size,
             hidden_size=model_config["hidden_size"],
             output_size=model_config["output_size"]
-        )
-    
+            )
+        
     else:
         raise ValueError(f"Tipo de modelo desconhecido: {model_type}")
