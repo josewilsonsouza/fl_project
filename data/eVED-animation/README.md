@@ -75,4 +75,4 @@ pip install --upgrade streamlit
 ## 🆘 Suporte
 
 - 💻 Código: [app_streamlit.py](app_streamlit.py)
-- 🐛 Issues: Repositório do FLEVEn
+- 🐛 Issues: Repositório do [FLEVEn](https://github.com/josewilsonsouza/fleven)
