@@ -6,6 +6,7 @@ venv/
 # Flower
 .flwr/
 *.fab
+CLAUDE.md
 
 # Resultados
 results/
@@ -15,12 +16,9 @@ mlruns/
 
 *.pt
 *.pth
-*.parquet
 
 # Jupyter Notebooks
 *.ipynb_checkpoints
-AGDA_Clients.ipynb
 
 # do dataset eVED-hf
 data/eVED_train_test_FRAC-TEST_40_STATE_42/
-data/EVED_Clients

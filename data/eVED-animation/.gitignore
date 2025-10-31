@@ -1,0 +1,21 @@
+# Arquivos HTML gerados pelas visualizações
+*.html
+
+# Arquivos temporários do Jupyter
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# Cache Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Outputs de exemplo (manter apenas os que estão no repositório)
+!trip_client_0_trip_706.html
+!trip_client_0_trip_707.html
+CHANGELOG.md

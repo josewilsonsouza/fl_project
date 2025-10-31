@@ -32,77 +32,82 @@ def create_sliding_windows(data, sequence_length, prediction_length):
         ys.append(y)
     return np.array(xs), np.array(ys)
 
-def load_data(client_id: int, sequence_length: int, prediction_length: int, 
-              batch_size: int, train_test_split: float = None, data_base_path: str = None,
+def load_data(client_id: int, sequence_length: int, prediction_length: int,
+              batch_size: int, train_test_split: float = 0.8, data_base_path: str = None,
               target_column: str = "Energy_Consumption"):
     """
     Carrega os dados para um cliente específico do dataset eVED.
-    
+
     Args:
         client_id: ID do cliente (índice da pasta client_N)
         sequence_length: Tamanho da janela de entrada
         prediction_length: Número de passos à frente para prever
         batch_size: Tamanho do batch
-        train_test_split: IGNORADO - usa as pastas train/test do dataset
+        train_test_split: Proporção de trips para treino (padrão: 0.8 = 80% treino, 20% teste)
         data_base_path: Caminho base para EVED_Clients (ex: "EVED_Clients")
         target_column: Coluna alvo (padrão: "Energy_Consumption")
-    
+
     Returns:
         trainloader, testloader, num_features
     """
-    
+
     # Define o diretório base
     if data_base_path:
         base_dir = Path(data_base_path)
     else:
         base_dir = Path(__file__).parent.parent / "data" / "EVED_Clients"
-    
-    train_dir = base_dir / "train" / f"client_{client_id}"
-    test_dir = base_dir / "test" / f"client_{client_id}"
-    
+
+    # Agora usamos APENAS a pasta train/
+    client_dir = base_dir / "train" / f"client_{client_id}"
+
     print(f"\n{'='*60}")
     print(f"[Cliente {client_id}] Carregando dados do eVED")
     print(f"{'='*60}")
-    print(f"Train: {train_dir.absolute()}")
-    print(f"Test:  {test_dir.absolute()}")
-    
-    # Verifica se os diretórios existem
-    if not train_dir.exists():
+    print(f"Diretório: {client_dir.absolute()}")
+    print(f"Split temporal: {train_test_split*100:.0f}% treino / {(1-train_test_split)*100:.0f}% teste")
+
+    # Verifica se o diretório existe
+    if not client_dir.exists():
         raise FileNotFoundError(
-            f"Diretório de treino não encontrado: {train_dir.absolute()}"
+            f"Diretório do cliente não encontrado: {client_dir.absolute()}"
         )
-    if not test_dir.exists():
-        raise FileNotFoundError(
-            f"Diretório de teste não encontrado: {test_dir.absolute()}"
-        )
-    
+
     # Carrega todos os arquivos parquet (trips)
-    train_files = list(train_dir.glob("trip_*.parquet"))
-    test_files = list(test_dir.glob("trip_*.parquet"))
-    
+    trip_files = list(client_dir.glob("trip_*.parquet"))
+
     # Ignora metadata.json se existir
-    train_files = [f for f in train_files if 'metadata' not in f.name.lower()]
-    test_files = [f for f in test_files if 'metadata' not in f.name.lower()]
-    
-    if not train_files:
+    trip_files = [f for f in trip_files if 'metadata' not in f.name.lower()]
+
+    if not trip_files:
         raise FileNotFoundError(
-            f"Nenhum arquivo de trip encontrado em {train_dir.absolute()}"
+            f"Nenhum arquivo de trip encontrado em {client_dir.absolute()}"
         )
-    if not test_files:
-        raise FileNotFoundError(
-            f"Nenhum arquivo de trip encontrado em {test_dir.absolute()}"
-        )
-    
-    print(f"📦 Trips de treino: {len(train_files)}")
-    print(f"📦 Trips de teste:  {len(test_files)}")
-    
+
+    # Ordena os arquivos por nome para garantir ordem temporal consistente
+    trip_files = sorted(trip_files, key=lambda x: x.name)
+
+    print(f"📦 Total de trips encontradas: {len(trip_files)}")
+
+    # Split temporal: primeiras X trips para treino, últimas Y trips para teste
+    split_idx = int(len(trip_files) * train_test_split)
+    if split_idx == 0:
+        split_idx = 1  # Garante pelo menos 1 trip para treino
+    if split_idx >= len(trip_files):
+        split_idx = len(trip_files) - 1  # Garante pelo menos 1 trip para teste
+
+    train_files = trip_files[:split_idx]
+    test_files = trip_files[split_idx:]
+
+    print(f"📦 Trips de treino: {len(train_files)} (primeiras {split_idx} trips)")
+    print(f"📦 Trips de teste:  {len(test_files)} (últimas {len(trip_files) - split_idx} trips)")
+
     # Carrega e concatena os dados
     train_dfs = [pd.read_parquet(f) for f in train_files]
     test_dfs = [pd.read_parquet(f) for f in test_files]
-    
+
     train_df = pd.concat(train_dfs, ignore_index=True)
     test_df = pd.concat(test_dfs, ignore_index=True)
-    
+
     print(f"📊 Pontos de treino: {len(train_df):,}")
     print(f"📊 Pontos de teste:  {len(test_df):,}")
     
@@ -131,12 +136,12 @@ def load_data(client_id: int, sequence_length: int, prediction_length: int,
     missing_features = [col for col in feature_columns if col not in train_df.columns]
     
     if missing_features:
-        print(f"⚠️  Features não encontradas (serão ignoradas): {missing_features}")
-    
+        print(f"AVISO: Features nao encontradas (serao ignoradas): {missing_features}")
+
     if not available_features:
-        raise ValueError("Nenhuma feature válida encontrada no dataset!")
-    
-    print(f"\n✅ Features selecionadas ({len(available_features)}):")
+        raise ValueError("Nenhuma feature valida encontrada no dataset!")
+
+    print(f"\nFeatures selecionadas ({len(available_features)}):")
     for feat in available_features:
         print(f"   - {feat}")
     
@@ -148,17 +153,25 @@ def load_data(client_id: int, sequence_length: int, prediction_length: int,
     test_processed = test_df[all_columns].copy()
     
     # Remove linhas com valores nulos ou infinitos
-    print(f"\n🧹 Limpeza de dados...")
+    print(f"\nLimpeza de dados...")
     print(f"   Treino antes: {len(train_processed):,} linhas")
     train_processed = train_processed.replace([np.inf, -np.inf], np.nan).dropna()
     print(f"   Treino depois: {len(train_processed):,} linhas")
-    
+
     print(f"   Teste antes: {len(test_processed):,} linhas")
     test_processed = test_processed.replace([np.inf, -np.inf], np.nan).dropna()
     print(f"   Teste depois: {len(test_processed):,} linhas")
+
+    # Verifica se há dados suficientes
+    min_required_points = sequence_length + prediction_length
+    if len(train_processed) < min_required_points or len(test_processed) < min_required_points:
+        raise ValueError(
+            f"Dados insuficientes após limpeza!\n"
+            f"   Treino: {len(train_processed)} pontos (mínimo: {min_required_points})\n"
+            f"   Teste: {len(test_processed)} pontos (mínimo: {min_required_points})\n"
+            f"   Cliente {client_id} será ignorado nesta simulação."
+        )
     
-    if len(train_processed) == 0 or len(test_processed) == 0:
-        raise ValueError("Dados vazios após limpeza!")
     
     # Normalização (MinMaxScaler)
     print(f"\n📏 Normalizando dados...")

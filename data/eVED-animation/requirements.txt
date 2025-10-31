@@ -1,0 +1,17 @@
+# Dependências para a aplicação Streamlit de visualização eVED
+
+# Core
+streamlit>=1.28.0
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Visualização
+plotly>=5.17.0
+folium>=0.14.0
+
+# Dados
+pyarrow>=12.0.0  # Para ler arquivos .parquet
+
+# Análises avançadas
+scikit-learn>=1.3.0
+statsmodels>=0.14.0  # Para trendlines (lowess) no Plotly
