@@ -68,8 +68,81 @@ class MLPNet(nn.Module):
         # deforma/achata o input de (batch, sequence_length, features) para (batch, sequence_length * features)
         batch_size = x.shape[0]
         x_flat = x.view(batch_size, -1)
-        
+
         out = self.fc1(x_flat)
         out = self.relu(out)
         out = self.fc2(out)
         return out
+
+
+# FedPer: Federated Personalization
+# Modelo híbrido com cabeça global (LSTM) e cauda local (Dense)
+class FedPerLSTM(nn.Module):
+    """
+    Arquitetura FedPer (Federated Personalization):
+
+    - GLOBAL HEAD (shared_lstm): Compartilhado entre todos os clientes, agregado pelo servidor
+    - LOCAL TAIL (personal_*): Mantido localmente em cada cliente, NUNCA agregado
+
+    Vantagens:
+    - Compartilha padrões temporais gerais via LSTM global
+    - Personaliza predição final via camadas locais
+    - Cada veículo tem seu próprio modelo adaptado
+
+    Uso:
+        model_type = "fedper"
+        input-size = N  # Features universais
+        hidden-size = 64  # LSTM global
+        personal-hidden-size = 32  # Dense local (opcional)
+    """
+    def __init__(self, input_size, hidden_size, output_size,
+                 num_layers=2, dropout=0.2, personal_hidden_size=32):
+        super(FedPerLSTM, self).__init__()
+
+        # ========== CABEÇA GLOBAL (Agregada via FedAvg) ==========
+        self.shared_lstm = nn.LSTM(
+            input_size,
+            hidden_size,
+            num_layers,
+            batch_first=True,
+            dropout=dropout if num_layers > 1 else 0.0
+        )
+
+        # ========== CAUDA LOCAL (Nunca agregada) ==========
+        self.personal_fc1 = nn.Linear(hidden_size, personal_hidden_size)
+        self.personal_dropout = nn.Dropout(dropout)
+        self.personal_fc2 = nn.Linear(personal_hidden_size, output_size)
+
+    def forward(self, x):
+        # Cabeça global: extração de features temporais
+        lstm_out, _ = self.shared_lstm(x)
+        shared_features = lstm_out[:, -1, :]  # Último timestep
+
+        # Cauda local: personalização
+        out = self.personal_fc1(shared_features)
+        out = F.relu(out)
+        out = self.personal_dropout(out)
+        out = self.personal_fc2(out)
+        return out
+
+    def get_global_params(self):
+        """Retorna apenas os parâmetros da cabeça global (para agregação)"""
+        return {
+            name: param
+            for name, param in self.named_parameters()
+            if name.startswith('shared_')
+        }
+
+    def get_local_params(self):
+        """Retorna apenas os parâmetros da cauda local (mantidos localmente)"""
+        return {
+            name: param
+            for name, param in self.named_parameters()
+            if name.startswith('personal_')
+        }
+
+    def set_global_params(self, params_dict):
+        """Atualiza apenas os parâmetros globais"""
+        state_dict = self.state_dict()
+        state_dict.update(params_dict)
+        self.load_state_dict(state_dict, strict=False)

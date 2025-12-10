@@ -22,3 +22,5 @@ mlruns/
 
 # do dataset eVED-hf
 data/eVED_train_test_FRAC-TEST_40_STATE_42/
+
+/data

@@ -71,40 +71,42 @@ metrics-base-path = "" # caminho das metricas
 results-base-path = "" # caminho dos results
 
 # Configurações MLflow
-mlflow-tracking-uri = "https://jwsouza13-fleven.hf.space"
+mlflow-tracking-uri = "http://127.0.0.1:5000"
 mlflow-experiment-name = "FLEVEn-eVED-Experiments"  # teste no eVED
 mlflow-enable = true
 
-# ========================================
-# 🚗 CONFIGURAÇÕES PARA O DATASET eVED
-# ========================================
+# CONFIGURAÇÕES PARA O DATASET eVED
 
-# Escolha dos modelos do FLEVEn: "lstm", "lstm_dense", "mlp"
-model-type = "lstm"
+# Escolha dos modelos do FLEVEn: "lstm", "lstm_dense", "mlp", "fedper"
+model-type = "fedper"  # Altere para "fedper" para usar personalização federada
 
 # Parâmetros para "lstm" e "mlp"
-hidden-size = 64  # 32 -> 64 (mais capacidade para padrões complexos)
+hidden-size = 64  # mais capacidade para padrões complexos)
 
 # Parâmetros para "lstm_dense" (modelo adaptado)
-lstm-hidden-size = 64   # 32 -> 64
-dense-hidden-size = 32  # 16 -> 32
+lstm-hidden-size = 64
+dense-hidden-size = 32
 
-# Parâmetros para "lstm" e "lstm_dense"
-input-size = 2  # ALTERADO: 3 -> 5 (número de features globais do eVED)
-                # Features: Vehicle Speed, Energy_Consumption
-num-layers = 2  #(mais camadas LSTM para capturar padrões temporais)
+# Parâmetros para "fedper" (Federated Personalization)
+personal-hidden-size = 32  # Tamanho da camada densa local (cauda personalizada)
+
+# Parâmetros para "lstm", "lstm_dense" e "fedper"
+input-size = 3  # (número de features de entrada)
+                # IMPORTANTE: DEVE coincidir com feature_columns em fleven/utils.py
+                # Atualmente: Vehicle Speed[km/h] apenas = 1 feature
+                # Para FedPer: recomenda-se 4 features universais (Speed, Speed Limit, Elevation, Gradient)
+num-layers = 2  # (mais camadas LSTM para capturar padrões temporais)
 dropout = 0.2
 
-# ========================================
-# 📊 CONFIGURAÇÕES DE SÉRIES TEMPORAIS
-# ========================================
-sequence-length = 50     # 100 -> 50 (janela de entrada menor, mais adequada para trips curtas)
-prediction-length = 10   # 50 -> 10 (prever 10 pontos à frente)
+#CONFIGURAÇÕES DE SÉRIES TEMPORAIS
+
+sequence-length = 50     # (janela de entrada menor, mais adequada para trips curtas)
+prediction-length = 10   # (prever 10 pontos à frente)
 target-column = "Energy_Consumption"
 
-# ========================================
-# 🎓 CONFIGURAÇÕES DE TREINAMENTO
-# ========================================
+
+#CONFIGURAÇÕES DE TREINAMENTO
+
 batch-size = 64
 learning-rate = 1e-4
 local-epochs = 2
@@ -136,7 +138,9 @@ initial_accumulator_value_yogi = 1e-6
 default = "local-simulation"
 
 [tool.flwr.federations.local-simulation]
-options.num-supernodes = 20
+options.num-supernodes = 20  # Total de clientes válidos: 184 (use até 184)
+                             # 48 clientes ruins foram movidos para EVED_Clients/ruins/
+                             # O mapeamento partition_id -> client_id pula clientes removidos automaticamente
 options.backend.client-resources.num-cpus = 1
 options.backend.client-resources.num-gpus = 0.0
 
